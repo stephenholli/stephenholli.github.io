@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Escape Hello World</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: black; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        let pixelSize = 5;
+        let text = "HELLO WORLD";
+        let scatterRadius = 50;
+        let pixels = [];
+        let mouse = { x: -100, y: -100 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            pixelSize = Math.max(3, Math.min(8, Math.floor(canvas.width / 150))); // Adjust pixel size dynamically
+            createTextPixels();
+        }
+
+        function createTextPixels() {
+            ctx.fillStyle = "white";
+            let fontSize = Math.floor(canvas.width / 8); // Scale text dynamically
+            ctx.font = `${fontSize}px Arial`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            // Position the text at the center of the screen
+            let textWidth = ctx.measureText(text).width;
+            let startX = (canvas.width - textWidth) / 2;
+            let startY = canvas.height / 2;
+
+            // Draw the text off-screen to extract pixel data
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillText(text, canvas.width / 2, startY);
+
+            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            pixels = [];
+
+            // Convert bright pixels into movable points
+            for (let y = 0; y < canvas.height; y += pixelSize) {
+                for (let x = 0; x < canvas.width; x += pixelSize) {
+                    let index = (y * canvas.width + x) * 4;
+                    if (imageData[index + 3] > 128) {
+                        pixels.push({
+                            x: x,
+                            y: y,
+                            homeX: x,
+                            homeY: y,
+                            vx: 0,
+                            vy: 0
+                        });
+                    }
+                }
+            }
+        }
+
+        function drawPixels() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+
+            pixels.forEach(pixel => {
+                let dx = pixel.x - mouse.x;
+                let dy = pixel.y - mouse.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < scatterRadius) {
+                    let angle = Math.atan2(dy, dx);
+                    pixel.vx += Math.cos(angle) * 5;
+                    pixel.vy += Math.sin(angle) * 5;
+                }
+
+                pixel.x += pixel.vx;
+                pixel.y += pixel.vy;
+                pixel.vx *= 0.9;
+                pixel.vy *= 0.9;
+
+                // Return pixels to original position smoothly
+                pixel.vx += (pixel.homeX - pixel.x) * 0.01;
+                pixel.vy += (pixel.homeY - pixel.y) * 0.01;
+
+                ctx.fillRect(pixel.x, pixel.y, pixelSize, pixelSize);
+            });
+
+            requestAnimationFrame(drawPixels);
+        }
+
+        canvas.addEventListener("mousemove", (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        canvas.addEventListener("touchmove", (e) => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+        });
+
+        canvas.addEventListener("mouseleave", () => {
+            mouse.x = -100;
+            mouse.y = -100;
+        });
+
+        window.addEventListener("resize", resizeCanvas);
+
+        resizeCanvas();
+        drawPixels();
+    </script>
+</body>
+</html>
