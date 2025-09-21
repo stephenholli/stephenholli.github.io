@@ -112,6 +112,14 @@
             mouse.y = -100;
         });
 
+        // Add click event to navigate to interview prep
+        canvas.addEventListener("click", () => {
+            window.location.href = "azure-rag-architecture.html";
+        });
+
+        // Visual feedback on hover
+        canvas.style.cursor = "pointer";
+
         window.addEventListener("resize", resizeCanvas);
 
         resizeCanvas();
