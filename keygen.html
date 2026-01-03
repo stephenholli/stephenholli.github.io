@@ -59,8 +59,12 @@
         let mouseX = 0, mouseY = 0;
 
         // Glitch parameters
-        let glitchIntensity = 0;
-        let glitchTimer = 0;
+        const BASE_GLITCH = 0.15;          // Constant base glitch level
+        const MAX_GLITCH = 1.5;            // Maximum glitch when holding
+        const GLITCH_RAMP_SPEED = 0.03;    // How fast glitch ramps up
+        const GLITCH_DECAY_SPEED = 0.02;   // How fast glitch decays
+        let glitchIntensity = BASE_GLITCH;
+        let isTouching = false;
 
         function init() {
             // Scene setup
@@ -196,10 +200,25 @@
             window.addEventListener('resize', onResize);
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('touchmove', onTouchMove, { passive: true });
-            document.addEventListener('click', triggerGlitch);
-            document.addEventListener('touchstart', triggerGlitch, { passive: true });
+
+            // Touch/mouse down - start ramping
+            document.addEventListener('mousedown', onPointerDown);
+            document.addEventListener('touchstart', onPointerDown, { passive: true });
+
+            // Touch/mouse up - stop ramping
+            document.addEventListener('mouseup', onPointerUp);
+            document.addEventListener('touchend', onPointerUp, { passive: true });
+            document.addEventListener('touchcancel', onPointerUp, { passive: true });
 
             animate();
+        }
+
+        function onPointerDown() {
+            isTouching = true;
+        }
+
+        function onPointerUp() {
+            isTouching = false;
         }
 
         function createParticles() {
@@ -230,11 +249,6 @@
 
             const particles = new THREE.Points(geometry, material);
             scene.add(particles);
-        }
-
-        function triggerGlitch() {
-            glitchIntensity = 1.0;
-            glitchTimer = 0.3;
         }
 
         function onMouseMove(e) {
@@ -273,40 +287,44 @@
                 pixelCtx.fillRect(0, y, width, 1);
             }
 
-            // Glitch effect
-            if (glitchIntensity > 0) {
-                // RGB split
-                const offset = glitchIntensity * 10;
+            // Glitch effect (always on, intensity varies)
+            const offset = glitchIntensity * 10;
 
-                // Horizontal glitch bars
-                for (let i = 0; i < 5 * glitchIntensity; i++) {
-                    const y = Math.random() * height;
-                    const h = Math.random() * 20 + 5;
-                    const shift = (Math.random() - 0.5) * offset * 5;
+            // Horizontal glitch bars
+            const barCount = Math.floor(3 + 7 * glitchIntensity);
+            for (let i = 0; i < barCount; i++) {
+                const y = Math.random() * height;
+                const h = Math.random() * (10 + 20 * glitchIntensity) + 3;
+                const shift = (Math.random() - 0.5) * offset * 5;
 
-                    pixelCtx.fillStyle = `rgba(255, 0, 0, ${0.1 * glitchIntensity})`;
-                    pixelCtx.fillRect(shift, y, width, h);
+                pixelCtx.fillStyle = `rgba(255, 0, 0, ${0.05 + 0.15 * glitchIntensity})`;
+                pixelCtx.fillRect(shift, y, width, h);
 
-                    pixelCtx.fillStyle = `rgba(0, 255, 255, ${0.1 * glitchIntensity})`;
-                    pixelCtx.fillRect(-shift, y, width, h);
-                }
+                pixelCtx.fillStyle = `rgba(0, 255, 255, ${0.05 + 0.15 * glitchIntensity})`;
+                pixelCtx.fillRect(-shift, y, width, h);
+            }
 
-                // Random pixel blocks
-                for (let i = 0; i < 20 * glitchIntensity; i++) {
+            // Random pixel blocks
+            const blockCount = Math.floor(5 + 25 * glitchIntensity);
+            for (let i = 0; i < blockCount; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                const w = Math.random() * (30 + 50 * glitchIntensity) + 5;
+                const h = Math.random() * (5 + 10 * glitchIntensity) + 1;
+
+                const hue = Math.random() * 360;
+                pixelCtx.fillStyle = `hsla(${hue}, 100%, 50%, ${0.1 + 0.3 * glitchIntensity})`;
+                pixelCtx.fillRect(x, y, w, h);
+            }
+
+            // Extra chaos at high intensity
+            if (glitchIntensity > 0.5) {
+                const chaos = (glitchIntensity - 0.5) * 2;
+                for (let i = 0; i < 10 * chaos; i++) {
                     const x = Math.random() * width;
                     const y = Math.random() * height;
-                    const w = Math.random() * 50 + 10;
-                    const h = Math.random() * 10 + 2;
-
-                    const hue = Math.random() * 360;
-                    pixelCtx.fillStyle = `hsla(${hue}, 100%, 50%, ${0.3 * glitchIntensity})`;
-                    pixelCtx.fillRect(x, y, w, h);
-                }
-
-                glitchTimer -= 0.016;
-                if (glitchTimer <= 0) {
-                    glitchIntensity *= 0.9;
-                    if (glitchIntensity < 0.01) glitchIntensity = 0;
+                    pixelCtx.fillStyle = `rgba(255, 255, 255, ${0.3 * chaos})`;
+                    pixelCtx.fillRect(x, y, Math.random() * 150 + 20, 1 + Math.random() * 3);
                 }
             }
 
@@ -342,6 +360,13 @@
             requestAnimationFrame(animate);
 
             time += 0.016;
+
+            // Update glitch intensity - ramp up when touching, decay when not
+            if (isTouching) {
+                glitchIntensity = Math.min(MAX_GLITCH, glitchIntensity + GLITCH_RAMP_SPEED);
+            } else {
+                glitchIntensity = Math.max(BASE_GLITCH, glitchIntensity - GLITCH_DECAY_SPEED);
+            }
 
             // Update shader uniforms
             torusKnot.material.uniforms.time.value = time;
