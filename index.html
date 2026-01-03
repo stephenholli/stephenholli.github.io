@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Escape Hello World</title>
+    <title>hello Lacey</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: black; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        body {
+            background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f0f23 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
         canvas { display: block; }
     </style>
 </head>
@@ -19,37 +26,45 @@
 
         let pixelSize = 5;
         let text = "hello Lacey";
-        let scatterRadius = 50;
+        let scatterRadius = 60;
         let pixels = [];
+        let hearts = [];
+        let sparkles = [];
         let mouse = { x: -100, y: -100 };
+        let time = 0;
+
+        // Romantic color palette
+        const colors = [
+            { r: 255, g: 105, b: 180 },  // Hot pink
+            { r: 255, g: 20, b: 147 },   // Deep pink
+            { r: 255, g: 182, b: 193 },  // Light pink
+            { r: 238, g: 130, b: 238 },  // Violet
+            { r: 186, g: 85, b: 211 },   // Medium orchid
+            { r: 147, g: 112, b: 219 }, // Medium purple
+        ];
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            pixelSize = Math.max(3, Math.min(8, Math.floor(canvas.width / 150))); // Adjust pixel size dynamically
+            pixelSize = Math.max(3, Math.min(8, Math.floor(canvas.width / 150)));
             createTextPixels();
         }
 
         function createTextPixels() {
             ctx.fillStyle = "white";
-            let fontSize = Math.floor(canvas.width / 8); // Scale text dynamically
-            ctx.font = `${fontSize}px Arial`;
+            let fontSize = Math.floor(canvas.width / 8);
+            ctx.font = `bold ${fontSize}px Georgia, serif`;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
-            // Position the text at the center of the screen
-            let textWidth = ctx.measureText(text).width;
-            let startX = (canvas.width - textWidth) / 2;
             let startY = canvas.height / 2;
 
-            // Draw the text off-screen to extract pixel data
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillText(text, canvas.width / 2, startY);
 
             let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             pixels = [];
 
-            // Convert bright pixels into movable points
             for (let y = 0; y < canvas.height; y += pixelSize) {
                 for (let x = 0; x < canvas.width; x += pixelSize) {
                     let index = (y * canvas.width + x) * 4;
@@ -60,17 +75,125 @@
                             homeX: x,
                             homeY: y,
                             vx: 0,
-                            vy: 0
+                            vy: 0,
+                            colorIndex: Math.random() * colors.length,
+                            colorSpeed: 0.02 + Math.random() * 0.03,
+                            glowIntensity: 0.5 + Math.random() * 0.5
                         });
                     }
                 }
             }
         }
 
-        function drawPixels() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "white";
+        // Create floating hearts
+        function createHeart() {
+            hearts.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height + 20,
+                size: 10 + Math.random() * 20,
+                speed: 1 + Math.random() * 2,
+                wobble: Math.random() * Math.PI * 2,
+                wobbleSpeed: 0.02 + Math.random() * 0.03,
+                opacity: 0.3 + Math.random() * 0.5,
+                rotation: Math.random() * 0.5 - 0.25
+            });
+        }
 
+        // Create sparkles
+        function createSparkle() {
+            sparkles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: 1 + Math.random() * 3,
+                life: 1,
+                decay: 0.01 + Math.random() * 0.02,
+                twinkleSpeed: 0.1 + Math.random() * 0.2
+            });
+        }
+
+        function drawHeart(x, y, size, opacity, rotation) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.beginPath();
+            ctx.moveTo(0, size * 0.3);
+            ctx.bezierCurveTo(-size * 0.5, -size * 0.3, -size, size * 0.3, 0, size);
+            ctx.bezierCurveTo(size, size * 0.3, size * 0.5, -size * 0.3, 0, size * 0.3);
+            ctx.closePath();
+
+            let gradient = ctx.createRadialGradient(0, size * 0.5, 0, 0, size * 0.5, size);
+            gradient.addColorStop(0, `rgba(255, 105, 180, ${opacity})`);
+            gradient.addColorStop(0.5, `rgba(255, 20, 147, ${opacity * 0.8})`);
+            gradient.addColorStop(1, `rgba(199, 21, 133, ${opacity * 0.5})`);
+
+            ctx.fillStyle = gradient;
+            ctx.shadowColor = 'rgba(255, 105, 180, 0.8)';
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function getColor(colorIndex) {
+            let i = Math.floor(colorIndex) % colors.length;
+            let next = (i + 1) % colors.length;
+            let t = colorIndex % 1;
+
+            return {
+                r: colors[i].r + (colors[next].r - colors[i].r) * t,
+                g: colors[i].g + (colors[next].g - colors[i].g) * t,
+                b: colors[i].b + (colors[next].b - colors[i].b) * t
+            };
+        }
+
+        function drawPixels() {
+            time += 0.016;
+
+            // Create gradient background
+            let bgGradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, 0,
+                canvas.width / 2, canvas.height / 2, canvas.width * 0.8
+            );
+            bgGradient.addColorStop(0, '#2d1b4e');
+            bgGradient.addColorStop(0.5, '#1a0a2e');
+            bgGradient.addColorStop(1, '#0a0515');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Spawn hearts occasionally
+            if (Math.random() < 0.03) createHeart();
+
+            // Spawn sparkles
+            if (Math.random() < 0.15) createSparkle();
+
+            // Draw and update sparkles
+            sparkles = sparkles.filter(s => s.life > 0);
+            sparkles.forEach(sparkle => {
+                let twinkle = Math.sin(time * sparkle.twinkleSpeed * 50) * 0.5 + 0.5;
+                let alpha = sparkle.life * twinkle;
+
+                ctx.beginPath();
+                ctx.arc(sparkle.x, sparkle.y, sparkle.size * twinkle, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                sparkle.life -= sparkle.decay;
+            });
+
+            // Draw and update hearts
+            hearts = hearts.filter(h => h.y > -50);
+            hearts.forEach(heart => {
+                heart.y -= heart.speed;
+                heart.wobble += heart.wobbleSpeed;
+                heart.x += Math.sin(heart.wobble) * 0.5;
+
+                drawHeart(heart.x, heart.y, heart.size, heart.opacity, heart.rotation);
+            });
+
+            // Draw glowing text pixels
+            ctx.shadowBlur = 0;
             pixels.forEach(pixel => {
                 let dx = pixel.x - mouse.x;
                 let dy = pixel.y - mouse.y;
@@ -78,20 +201,38 @@
 
                 if (distance < scatterRadius) {
                     let angle = Math.atan2(dy, dx);
-                    pixel.vx += Math.cos(angle) * 5;
-                    pixel.vy += Math.sin(angle) * 5;
+                    let force = (scatterRadius - distance) / scatterRadius;
+                    pixel.vx += Math.cos(angle) * force * 8;
+                    pixel.vy += Math.sin(angle) * force * 8;
                 }
 
                 pixel.x += pixel.vx;
                 pixel.y += pixel.vy;
-                pixel.vx *= 0.9;
-                pixel.vy *= 0.9;
+                pixel.vx *= 0.92;
+                pixel.vy *= 0.92;
 
-                // Return pixels to original position smoothly
-                pixel.vx += (pixel.homeX - pixel.x) * 0.01;
-                pixel.vy += (pixel.homeY - pixel.y) * 0.01;
+                pixel.vx += (pixel.homeX - pixel.x) * 0.015;
+                pixel.vy += (pixel.homeY - pixel.y) * 0.015;
 
+                // Animate color
+                pixel.colorIndex += pixel.colorSpeed;
+                let color = getColor(pixel.colorIndex);
+
+                // Pulsing glow
+                let pulse = Math.sin(time * 2 + pixel.colorIndex) * 0.3 + 0.7;
+                let glow = pixel.glowIntensity * pulse;
+
+                // Draw glow layer
+                ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, ${glow})`;
+                ctx.shadowBlur = 15 * glow;
+                ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
                 ctx.fillRect(pixel.x, pixel.y, pixelSize, pixelSize);
+
+                // Draw bright core
+                ctx.shadowBlur = 0;
+                let coreColor = `rgba(${Math.min(255, color.r + 50)}, ${Math.min(255, color.g + 50)}, ${Math.min(255, color.b + 50)}, ${0.8 + pulse * 0.2})`;
+                ctx.fillStyle = coreColor;
+                ctx.fillRect(pixel.x + 1, pixel.y + 1, pixelSize - 2, pixelSize - 2);
             });
 
             requestAnimationFrame(drawPixels);
@@ -103,6 +244,7 @@
         });
 
         canvas.addEventListener("touchmove", (e) => {
+            e.preventDefault();
             mouse.x = e.touches[0].clientX;
             mouse.y = e.touches[0].clientY;
         });
@@ -110,6 +252,23 @@
         canvas.addEventListener("mouseleave", () => {
             mouse.x = -100;
             mouse.y = -100;
+        });
+
+        // Click to burst hearts
+        canvas.addEventListener("click", (e) => {
+            for (let i = 0; i < 8; i++) {
+                let heart = {
+                    x: e.clientX + (Math.random() - 0.5) * 50,
+                    y: e.clientY,
+                    size: 15 + Math.random() * 25,
+                    speed: 2 + Math.random() * 3,
+                    wobble: Math.random() * Math.PI * 2,
+                    wobbleSpeed: 0.05 + Math.random() * 0.05,
+                    opacity: 0.6 + Math.random() * 0.4,
+                    rotation: Math.random() * 0.6 - 0.3
+                };
+                hearts.push(heart);
+            }
         });
 
         window.addEventListener("resize", resizeCanvas);
