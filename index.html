@@ -18,7 +18,7 @@
         const ctx = canvas.getContext("2d");
 
         let pixelSize = 5;
-        let text = "HELLO WORLD";
+        let text = "hello Lacey";
         let scatterRadius = 50;
         let pixels = [];
         let mouse = { x: -100, y: -100 };
@@ -111,14 +111,6 @@
             mouse.x = -100;
             mouse.y = -100;
         });
-
-        // Add click event to navigate to interview prep
-        canvas.addEventListener("click", () => {
-            window.location.href = "azure-rag-architecture.html";
-        });
-
-        // Visual feedback on hover
-        canvas.style.cursor = "pointer";
 
         window.addEventListener("resize", resizeCanvas);
 
