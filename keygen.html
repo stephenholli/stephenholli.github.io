@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEYGEN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        canvas { display: block; image-rendering: pixelated; }
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #0ff;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+        .back-link:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">&lt; BACK</a>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let time = 0;
+
+        // Starfield
+        const stars = [];
+        const STAR_COUNT = 200;
+
+        // Plasma
+        let plasmaCanvas, plasmaCtx;
+
+        // Scroller
+        const scrollText = "     GREETINGS TO ALL SCENERS! ... THIS IS A TRIBUTE TO THE GOLDEN AGE OF DEMOS ... REMEMBER THE AMIGA DAYS? ... CODING IS ART ... KEEP THE SCENE ALIVE! ...      ";
+        let scrollX = 0;
+
+        // Raster bar colors
+        const rasterColors = [
+            '#ff0000', '#ff3300', '#ff6600', '#ff9900', '#ffcc00',
+            '#ffff00', '#ccff00', '#99ff00', '#66ff00', '#33ff00',
+            '#00ff00', '#00ff33', '#00ff66', '#00ff99', '#00ffcc',
+            '#00ffff', '#00ccff', '#0099ff', '#0066ff', '#0033ff',
+            '#0000ff', '#3300ff', '#6600ff', '#9900ff', '#cc00ff',
+            '#ff00ff', '#ff00cc', '#ff0099', '#ff0066', '#ff0033'
+        ];
+
+        function init() {
+            resize();
+            window.addEventListener('resize', resize);
+
+            // Create stars
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    z: Math.random() * 3 + 0.5,
+                    brightness: Math.random()
+                });
+            }
+
+            // Create plasma buffer
+            plasmaCanvas = document.createElement('canvas');
+            plasmaCanvas.width = 128;
+            plasmaCanvas.height = 128;
+            plasmaCtx = plasmaCanvas.getContext('2d');
+
+            animate();
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        function updatePlasma() {
+            const imgData = plasmaCtx.createImageData(128, 128);
+            const data = imgData.data;
+
+            for (let y = 0; y < 128; y++) {
+                for (let x = 0; x < 128; x++) {
+                    const v1 = Math.sin(x / 16 + time);
+                    const v2 = Math.sin(y / 8 + time);
+                    const v3 = Math.sin((x + y) / 16 + time);
+                    const v4 = Math.sin(Math.sqrt(x * x + y * y) / 8 + time);
+
+                    const v = (v1 + v2 + v3 + v4 + 4) / 8;
+
+                    const i = (y * 128 + x) * 4;
+
+                    // Cyberpunk color palette
+                    data[i] = Math.floor(Math.sin(v * Math.PI * 2) * 127 + 128);
+                    data[i + 1] = Math.floor(Math.sin(v * Math.PI * 2 + 2) * 127 + 128);
+                    data[i + 2] = Math.floor(Math.sin(v * Math.PI * 2 + 4) * 127 + 128);
+                    data[i + 3] = 255;
+                }
+            }
+
+            plasmaCtx.putImageData(imgData, 0, 0);
+        }
+
+        function drawStarfield() {
+            stars.forEach(star => {
+                star.x -= star.z * 2;
+                if (star.x < 0) {
+                    star.x = width;
+                    star.y = Math.random() * height;
+                }
+
+                const twinkle = Math.sin(time * 10 + star.brightness * 100) * 0.3 + 0.7;
+                const alpha = twinkle * (star.z / 3.5);
+                const size = star.z;
+
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.fillRect(star.x, star.y, size, size);
+            });
+        }
+
+        function drawPlasma() {
+            updatePlasma();
+
+            // Draw plasma in center area with transparency
+            ctx.globalAlpha = 0.3;
+            ctx.drawImage(plasmaCanvas, 0, 0, 128, 128,
+                width / 2 - 200, height / 2 - 150, 400, 300);
+            ctx.globalAlpha = 1;
+        }
+
+        function drawRasterBars() {
+            const barHeight = 4;
+            const barCount = 12;
+            const amplitude = 100;
+            const baseY = height / 2;
+
+            for (let i = 0; i < barCount; i++) {
+                const offset = i * 0.3;
+                const y = baseY + Math.sin(time * 2 + offset) * amplitude;
+
+                const colorIndex = Math.floor((time * 30 + i * 3) % rasterColors.length);
+                const gradient = ctx.createLinearGradient(0, y - barHeight, 0, y + barHeight);
+
+                gradient.addColorStop(0, 'transparent');
+                gradient.addColorStop(0.3, rasterColors[colorIndex]);
+                gradient.addColorStop(0.5, '#fff');
+                gradient.addColorStop(0.7, rasterColors[colorIndex]);
+                gradient.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, y - barHeight, width, barHeight * 2);
+            }
+        }
+
+        function drawSineScroller() {
+            const charWidth = 40;
+            const charHeight = 50;
+            const amplitude = 30;
+            const frequency = 0.05;
+
+            ctx.font = 'bold 48px "Courier New", monospace';
+            ctx.textBaseline = 'middle';
+
+            scrollX -= 3;
+            if (scrollX < -scrollText.length * charWidth) {
+                scrollX = width;
+            }
+
+            for (let i = 0; i < scrollText.length; i++) {
+                const x = scrollX + i * charWidth;
+
+                if (x > -charWidth && x < width + charWidth) {
+                    const sineOffset = Math.sin((x * frequency) + time * 3) * amplitude;
+                    const y = height - 80 + sineOffset;
+
+                    // Color cycling
+                    const hue = (x * 0.5 + time * 50) % 360;
+
+                    // Glow effect
+                    ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+                    ctx.shadowBlur = 20;
+
+                    // Character with gradient
+                    ctx.fillStyle = `hsl(${hue}, 100%, 70%)`;
+                    ctx.fillText(scrollText[i], x, y);
+
+                    // Bright outline
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1;
+                    ctx.strokeText(scrollText[i], x, y);
+                }
+            }
+
+            ctx.shadowBlur = 0;
+        }
+
+        function drawLogo() {
+            const logoText = 'KEYGEN';
+            const logoY = height / 2 - 50;
+
+            // Bouncing effect
+            const bounce = Math.abs(Math.sin(time * 2)) * 20;
+
+            ctx.font = 'bold 80px "Courier New", monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Draw each character with individual effects
+            const chars = logoText.split('');
+            const totalWidth = ctx.measureText(logoText).width;
+            let xPos = width / 2 - totalWidth / 2 + 40;
+
+            chars.forEach((char, i) => {
+                const charBounce = Math.sin(time * 3 + i * 0.5) * 15;
+                const y = logoY - bounce + charBounce;
+
+                // Rainbow color
+                const hue = (i * 60 + time * 100) % 360;
+
+                // Shadow layers for 3D effect
+                for (let s = 5; s > 0; s--) {
+                    ctx.fillStyle = `hsla(${hue}, 100%, ${20 + s * 5}%, 0.5)`;
+                    ctx.fillText(char, xPos + s * 2, y + s * 2);
+                }
+
+                // Main character
+                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+                ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+                ctx.shadowBlur = 30;
+                ctx.fillText(char, xPos, y);
+
+                // Highlight
+                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = 0.5;
+                ctx.fillText(char, xPos, y - 2);
+                ctx.globalAlpha = 1;
+
+                xPos += ctx.measureText(char).width;
+            });
+
+            ctx.shadowBlur = 0;
+            ctx.textAlign = 'left';
+        }
+
+        function drawScanlines() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            for (let y = 0; y < height; y += 4) {
+                ctx.fillRect(0, y, width, 2);
+            }
+        }
+
+        function drawVignette() {
+            const gradient = ctx.createRadialGradient(
+                width / 2, height / 2, height / 4,
+                width / 2, height / 2, height
+            );
+            gradient.addColorStop(0, 'transparent');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        function drawCopperBars() {
+            // Top copper bar
+            const topGradient = ctx.createLinearGradient(0, 0, width, 0);
+            for (let i = 0; i <= 10; i++) {
+                const hue = (i * 36 + time * 50) % 360;
+                topGradient.addColorStop(i / 10, `hsl(${hue}, 100%, 50%)`);
+            }
+            ctx.fillStyle = topGradient;
+            ctx.fillRect(0, 0, width, 3);
+
+            // Bottom copper bar
+            const bottomGradient = ctx.createLinearGradient(0, 0, width, 0);
+            for (let i = 0; i <= 10; i++) {
+                const hue = (i * 36 - time * 50 + 180) % 360;
+                bottomGradient.addColorStop(i / 10, `hsl(${hue}, 100%, 50%)`);
+            }
+            ctx.fillStyle = bottomGradient;
+            ctx.fillRect(0, height - 3, width, 3);
+        }
+
+        function animate() {
+            time += 0.016;
+
+            // Clear with slight trail
+            ctx.fillStyle = 'rgba(0, 0, 10, 0.3)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw layers
+            drawStarfield();
+            drawPlasma();
+            drawRasterBars();
+            drawLogo();
+            drawSineScroller();
+            drawScanlines();
+            drawVignette();
+            drawCopperBars();
+
+            requestAnimationFrame(animate);
+        }
+
+        init();
+    </script>
+</body>
+</html>
