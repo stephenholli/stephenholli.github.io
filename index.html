@@ -3,278 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hello Lacey</title>
+    <title>Demos</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f0f23 100%);
-            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f1a 100%);
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            padding: 40px 20px;
         }
-        canvas { display: block; }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 4rem);
+            background: linear-gradient(90deg, #00ffff, #ff00ff, #00ffff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .demos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .demo-card:hover::before {
+            left: 100%;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                        0 0 30px rgba(255, 0, 255, 0.1);
+        }
+
+        .demo-card h2 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .demo-card p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .demo-card .tag {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .tag.love {
+            background: rgba(255, 105, 180, 0.2);
+            color: #ff69b4;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+        }
+
+        .tag.retro {
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        footer {
+            margin-top: 60px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <h1>Demos</h1>
 
-    <script>
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
+    <div class="demos">
+        <a href="lacey.html" class="demo-card">
+            <h2>hello Lacey</h2>
+            <p>Interactive pixel text with floating hearts, glowing effects, and sparkles. Click to burst hearts!</p>
+            <span class="tag love">Love</span>
+        </a>
 
-        let pixelSize = 5;
-        let text = "hello Lacey";
-        let scatterRadius = 60;
-        let pixels = [];
-        let hearts = [];
-        let sparkles = [];
-        let mouse = { x: -100, y: -100 };
-        let time = 0;
+        <a href="keygen.html" class="demo-card">
+            <h2>Keygen</h2>
+            <p>Old-school demoscene vibes with plasma effects, starfield, sine scroller, and raster bars.</p>
+            <span class="tag retro">Retro</span>
+        </a>
+    </div>
 
-        // Romantic color palette
-        const colors = [
-            { r: 255, g: 105, b: 180 },  // Hot pink
-            { r: 255, g: 20, b: 147 },   // Deep pink
-            { r: 255, g: 182, b: 193 },  // Light pink
-            { r: 238, g: 130, b: 238 },  // Violet
-            { r: 186, g: 85, b: 211 },   // Medium orchid
-            { r: 147, g: 112, b: 219 }, // Medium purple
-        ];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            pixelSize = Math.max(3, Math.min(8, Math.floor(canvas.width / 150)));
-            createTextPixels();
-        }
-
-        function createTextPixels() {
-            ctx.fillStyle = "white";
-            let fontSize = Math.floor(canvas.width / 8);
-            ctx.font = `bold ${fontSize}px Georgia, serif`;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-
-            let startY = canvas.height / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillText(text, canvas.width / 2, startY);
-
-            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-            pixels = [];
-
-            for (let y = 0; y < canvas.height; y += pixelSize) {
-                for (let x = 0; x < canvas.width; x += pixelSize) {
-                    let index = (y * canvas.width + x) * 4;
-                    if (imageData[index + 3] > 128) {
-                        pixels.push({
-                            x: x,
-                            y: y,
-                            homeX: x,
-                            homeY: y,
-                            vx: 0,
-                            vy: 0,
-                            colorIndex: Math.random() * colors.length,
-                            colorSpeed: 0.02 + Math.random() * 0.03,
-                            glowIntensity: 0.5 + Math.random() * 0.5
-                        });
-                    }
-                }
-            }
-        }
-
-        // Create floating hearts
-        function createHeart() {
-            hearts.push({
-                x: Math.random() * canvas.width,
-                y: canvas.height + 20,
-                size: 10 + Math.random() * 20,
-                speed: 1 + Math.random() * 2,
-                wobble: Math.random() * Math.PI * 2,
-                wobbleSpeed: 0.02 + Math.random() * 0.03,
-                opacity: 0.3 + Math.random() * 0.5,
-                rotation: Math.random() * 0.5 - 0.25
-            });
-        }
-
-        // Create sparkles
-        function createSparkle() {
-            sparkles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: 1 + Math.random() * 3,
-                life: 1,
-                decay: 0.01 + Math.random() * 0.02,
-                twinkleSpeed: 0.1 + Math.random() * 0.2
-            });
-        }
-
-        function drawHeart(x, y, size, opacity, rotation) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(rotation);
-            ctx.beginPath();
-            ctx.moveTo(0, size * 0.3);
-            ctx.bezierCurveTo(-size * 0.5, -size * 0.3, -size, size * 0.3, 0, size);
-            ctx.bezierCurveTo(size, size * 0.3, size * 0.5, -size * 0.3, 0, size * 0.3);
-            ctx.closePath();
-
-            let gradient = ctx.createRadialGradient(0, size * 0.5, 0, 0, size * 0.5, size);
-            gradient.addColorStop(0, `rgba(255, 105, 180, ${opacity})`);
-            gradient.addColorStop(0.5, `rgba(255, 20, 147, ${opacity * 0.8})`);
-            gradient.addColorStop(1, `rgba(199, 21, 133, ${opacity * 0.5})`);
-
-            ctx.fillStyle = gradient;
-            ctx.shadowColor = 'rgba(255, 105, 180, 0.8)';
-            ctx.shadowBlur = 15;
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function getColor(colorIndex) {
-            let i = Math.floor(colorIndex) % colors.length;
-            let next = (i + 1) % colors.length;
-            let t = colorIndex % 1;
-
-            return {
-                r: colors[i].r + (colors[next].r - colors[i].r) * t,
-                g: colors[i].g + (colors[next].g - colors[i].g) * t,
-                b: colors[i].b + (colors[next].b - colors[i].b) * t
-            };
-        }
-
-        function drawPixels() {
-            time += 0.016;
-
-            // Create gradient background
-            let bgGradient = ctx.createRadialGradient(
-                canvas.width / 2, canvas.height / 2, 0,
-                canvas.width / 2, canvas.height / 2, canvas.width * 0.8
-            );
-            bgGradient.addColorStop(0, '#2d1b4e');
-            bgGradient.addColorStop(0.5, '#1a0a2e');
-            bgGradient.addColorStop(1, '#0a0515');
-            ctx.fillStyle = bgGradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Spawn hearts occasionally
-            if (Math.random() < 0.03) createHeart();
-
-            // Spawn sparkles
-            if (Math.random() < 0.15) createSparkle();
-
-            // Draw and update sparkles
-            sparkles = sparkles.filter(s => s.life > 0);
-            sparkles.forEach(sparkle => {
-                let twinkle = Math.sin(time * sparkle.twinkleSpeed * 50) * 0.5 + 0.5;
-                let alpha = sparkle.life * twinkle;
-
-                ctx.beginPath();
-                ctx.arc(sparkle.x, sparkle.y, sparkle.size * twinkle, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-                ctx.shadowBlur = 10;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-
-                sparkle.life -= sparkle.decay;
-            });
-
-            // Draw and update hearts
-            hearts = hearts.filter(h => h.y > -50);
-            hearts.forEach(heart => {
-                heart.y -= heart.speed;
-                heart.wobble += heart.wobbleSpeed;
-                heart.x += Math.sin(heart.wobble) * 0.5;
-
-                drawHeart(heart.x, heart.y, heart.size, heart.opacity, heart.rotation);
-            });
-
-            // Draw glowing text pixels
-            ctx.shadowBlur = 0;
-            pixels.forEach(pixel => {
-                let dx = pixel.x - mouse.x;
-                let dy = pixel.y - mouse.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < scatterRadius) {
-                    let angle = Math.atan2(dy, dx);
-                    let force = (scatterRadius - distance) / scatterRadius;
-                    pixel.vx += Math.cos(angle) * force * 8;
-                    pixel.vy += Math.sin(angle) * force * 8;
-                }
-
-                pixel.x += pixel.vx;
-                pixel.y += pixel.vy;
-                pixel.vx *= 0.92;
-                pixel.vy *= 0.92;
-
-                pixel.vx += (pixel.homeX - pixel.x) * 0.015;
-                pixel.vy += (pixel.homeY - pixel.y) * 0.015;
-
-                // Animate color
-                pixel.colorIndex += pixel.colorSpeed;
-                let color = getColor(pixel.colorIndex);
-
-                // Pulsing glow
-                let pulse = Math.sin(time * 2 + pixel.colorIndex) * 0.3 + 0.7;
-                let glow = pixel.glowIntensity * pulse;
-
-                // Draw glow layer
-                ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, ${glow})`;
-                ctx.shadowBlur = 15 * glow;
-                ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
-                ctx.fillRect(pixel.x, pixel.y, pixelSize, pixelSize);
-
-                // Draw bright core
-                ctx.shadowBlur = 0;
-                let coreColor = `rgba(${Math.min(255, color.r + 50)}, ${Math.min(255, color.g + 50)}, ${Math.min(255, color.b + 50)}, ${0.8 + pulse * 0.2})`;
-                ctx.fillStyle = coreColor;
-                ctx.fillRect(pixel.x + 1, pixel.y + 1, pixelSize - 2, pixelSize - 2);
-            });
-
-            requestAnimationFrame(drawPixels);
-        }
-
-        canvas.addEventListener("mousemove", (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        canvas.addEventListener("touchmove", (e) => {
-            e.preventDefault();
-            mouse.x = e.touches[0].clientX;
-            mouse.y = e.touches[0].clientY;
-        });
-
-        canvas.addEventListener("mouseleave", () => {
-            mouse.x = -100;
-            mouse.y = -100;
-        });
-
-        // Click to burst hearts
-        canvas.addEventListener("click", (e) => {
-            for (let i = 0; i < 8; i++) {
-                let heart = {
-                    x: e.clientX + (Math.random() - 0.5) * 50,
-                    y: e.clientY,
-                    size: 15 + Math.random() * 25,
-                    speed: 2 + Math.random() * 3,
-                    wobble: Math.random() * Math.PI * 2,
-                    wobbleSpeed: 0.05 + Math.random() * 0.05,
-                    opacity: 0.6 + Math.random() * 0.4,
-                    rotation: Math.random() * 0.6 - 0.3
-                };
-                hearts.push(heart);
-            }
-        });
-
-        window.addEventListener("resize", resizeCanvas);
-
-        resizeCanvas();
-        drawPixels();
-    </script>
+    <footer>Canvas experiments</footer>
 </body>
 </html>
