@@ -2,19 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KEYGEN</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #000;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            touch-action: none;
         }
-        canvas { display: block; image-rendering: pixelated; }
+        canvas { display: block; }
         .back-link {
             position: fixed;
             top: 20px;
@@ -28,292 +25,352 @@
             z-index: 100;
         }
         .back-link:hover { opacity: 1; }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
     <a href="index.html" class="back-link">&lt; BACK</a>
-    <canvas id="canvas"></canvas>
+    <canvas id="overlay"></canvas>
 
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
 
-        let width, height;
+    <script type="module">
+        import * as THREE from 'three';
+
+        let scene, camera, renderer;
+        let torusKnot, innerShape;
         let time = 0;
+        let pixelCanvas, pixelCtx;
+        let mouseX = 0, mouseY = 0;
 
-        // Starfield
-        const stars = [];
-        const STAR_COUNT = 200;
-
-        // Plasma
-        let plasmaCanvas, plasmaCtx;
-
-        // Scroller
-        const scrollText = "     GREETINGS TO ALL SCENERS! ... THIS IS A TRIBUTE TO THE GOLDEN AGE OF DEMOS ... REMEMBER THE AMIGA DAYS? ... CODING IS ART ... KEEP THE SCENE ALIVE! ...      ";
-        let scrollX = 0;
-
-        // Raster bar colors
-        const rasterColors = [
-            '#ff0000', '#ff3300', '#ff6600', '#ff9900', '#ffcc00',
-            '#ffff00', '#ccff00', '#99ff00', '#66ff00', '#33ff00',
-            '#00ff00', '#00ff33', '#00ff66', '#00ff99', '#00ffcc',
-            '#00ffff', '#00ccff', '#0099ff', '#0066ff', '#0033ff',
-            '#0000ff', '#3300ff', '#6600ff', '#9900ff', '#cc00ff',
-            '#ff00ff', '#ff00cc', '#ff0099', '#ff0066', '#ff0033'
-        ];
+        // Glitch parameters
+        let glitchIntensity = 0;
+        let glitchTimer = 0;
 
         function init() {
-            resize();
-            window.addEventListener('resize', resize);
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000008);
 
-            // Create stars
-            for (let i = 0; i < STAR_COUNT; i++) {
-                stars.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    z: Math.random() * 3 + 0.5,
-                    brightness: Math.random()
-                });
-            }
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
 
-            // Create plasma buffer
-            plasmaCanvas = document.createElement('canvas');
-            plasmaCanvas.width = 128;
-            plasmaCanvas.height = 128;
-            plasmaCtx = plasmaCanvas.getContext('2d');
+            // Renderer - iOS compatible settings
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true,
+                powerPreference: 'high-performance'
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            document.body.insertBefore(renderer.domElement, document.body.firstChild);
+
+            // Pixel overlay canvas
+            pixelCanvas = document.getElementById('overlay');
+            pixelCtx = pixelCanvas.getContext('2d');
+            resizeOverlay();
+
+            // Create torus knot with custom shader material
+            const geometry = new THREE.TorusKnotGeometry(1.2, 0.4, 128, 32);
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    colorA: { value: new THREE.Color(0x00ffff) },
+                    colorB: { value: new THREE.Color(0xff00ff) },
+                    colorC: { value: new THREE.Color(0xffff00) }
+                },
+                vertexShader: `
+                    varying vec3 vNormal;
+                    varying vec3 vPosition;
+                    varying vec2 vUv;
+                    uniform float time;
+
+                    void main() {
+                        vNormal = normalize(normalMatrix * normal);
+                        vPosition = position;
+                        vUv = uv;
+
+                        // Subtle vertex displacement
+                        vec3 pos = position;
+                        pos += normal * sin(position.x * 5.0 + time * 2.0) * 0.05;
+                        pos += normal * cos(position.y * 5.0 + time * 1.5) * 0.05;
+
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    uniform vec3 colorA;
+                    uniform vec3 colorB;
+                    uniform vec3 colorC;
+                    varying vec3 vNormal;
+                    varying vec3 vPosition;
+                    varying vec2 vUv;
+
+                    void main() {
+                        // Fresnel effect for edge glow
+                        vec3 viewDirection = normalize(cameraPosition - vPosition);
+                        float fresnel = pow(1.0 - abs(dot(viewDirection, vNormal)), 3.0);
+
+                        // Color cycling based on position and time
+                        float t = sin(vPosition.x * 2.0 + vPosition.y * 2.0 + time) * 0.5 + 0.5;
+                        float t2 = sin(vPosition.z * 3.0 + time * 1.5) * 0.5 + 0.5;
+
+                        vec3 color = mix(colorA, colorB, t);
+                        color = mix(color, colorC, t2);
+
+                        // Add fresnel glow
+                        color += fresnel * vec3(1.0, 1.0, 1.0) * 0.5;
+
+                        // Scanline effect
+                        float scanline = sin(gl_FragCoord.y * 1.5) * 0.1 + 0.9;
+                        color *= scanline;
+
+                        gl_FragColor = vec4(color, 1.0);
+                    }
+                `,
+                side: THREE.DoubleSide
+            });
+
+            torusKnot = new THREE.Mesh(geometry, material);
+            scene.add(torusKnot);
+
+            // Inner icosahedron
+            const innerGeometry = new THREE.IcosahedronGeometry(0.5, 1);
+            const innerMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 }
+                },
+                vertexShader: `
+                    varying vec3 vNormal;
+                    uniform float time;
+
+                    void main() {
+                        vNormal = normalize(normalMatrix * normal);
+                        vec3 pos = position;
+                        pos *= 1.0 + sin(time * 3.0) * 0.1;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    varying vec3 vNormal;
+
+                    void main() {
+                        float pulse = sin(time * 4.0) * 0.5 + 0.5;
+                        vec3 color = mix(vec3(1.0, 0.0, 0.5), vec3(0.0, 1.0, 1.0), pulse);
+
+                        float rim = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
+                        color += rim * 0.5;
+
+                        gl_FragColor = vec4(color, 1.0);
+                    }
+                `,
+                wireframe: true
+            });
+
+            innerShape = new THREE.Mesh(innerGeometry, innerMaterial);
+            scene.add(innerShape);
+
+            // Particle system for background
+            createParticles();
+
+            // Event listeners
+            window.addEventListener('resize', onResize);
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('touchmove', onTouchMove, { passive: true });
+            document.addEventListener('click', triggerGlitch);
+            document.addEventListener('touchstart', triggerGlitch, { passive: true });
 
             animate();
         }
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
+        function createParticles() {
+            const particleCount = 500;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
 
-        function updatePlasma() {
-            const imgData = plasmaCtx.createImageData(128, 128);
-            const data = imgData.data;
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
 
-            for (let y = 0; y < 128; y++) {
-                for (let x = 0; x < 128; x++) {
-                    const v1 = Math.sin(x / 16 + time);
-                    const v2 = Math.sin(y / 8 + time);
-                    const v3 = Math.sin((x + y) / 16 + time);
-                    const v4 = Math.sin(Math.sqrt(x * x + y * y) / 8 + time);
-
-                    const v = (v1 + v2 + v3 + v4 + 4) / 8;
-
-                    const i = (y * 128 + x) * 4;
-
-                    // Cyberpunk color palette
-                    data[i] = Math.floor(Math.sin(v * Math.PI * 2) * 127 + 128);
-                    data[i + 1] = Math.floor(Math.sin(v * Math.PI * 2 + 2) * 127 + 128);
-                    data[i + 2] = Math.floor(Math.sin(v * Math.PI * 2 + 4) * 127 + 128);
-                    data[i + 3] = 255;
-                }
+                colors[i * 3] = Math.random();
+                colors[i * 3 + 1] = Math.random();
+                colors[i * 3 + 2] = Math.random();
             }
 
-            plasmaCtx.putImageData(imgData, 0, 0);
-        }
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-        function drawStarfield() {
-            stars.forEach(star => {
-                star.x -= star.z * 2;
-                if (star.x < 0) {
-                    star.x = width;
-                    star.y = Math.random() * height;
-                }
-
-                const twinkle = Math.sin(time * 10 + star.brightness * 100) * 0.3 + 0.7;
-                const alpha = twinkle * (star.z / 3.5);
-                const size = star.z;
-
-                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.fillRect(star.x, star.y, size, size);
-            });
-        }
-
-        function drawPlasma() {
-            updatePlasma();
-
-            // Draw plasma in center area with transparency
-            ctx.globalAlpha = 0.3;
-            ctx.drawImage(plasmaCanvas, 0, 0, 128, 128,
-                width / 2 - 200, height / 2 - 150, 400, 300);
-            ctx.globalAlpha = 1;
-        }
-
-        function drawRasterBars() {
-            const barHeight = 4;
-            const barCount = 12;
-            const amplitude = 100;
-            const baseY = height / 2;
-
-            for (let i = 0; i < barCount; i++) {
-                const offset = i * 0.3;
-                const y = baseY + Math.sin(time * 2 + offset) * amplitude;
-
-                const colorIndex = Math.floor((time * 30 + i * 3) % rasterColors.length);
-                const gradient = ctx.createLinearGradient(0, y - barHeight, 0, y + barHeight);
-
-                gradient.addColorStop(0, 'transparent');
-                gradient.addColorStop(0.3, rasterColors[colorIndex]);
-                gradient.addColorStop(0.5, '#fff');
-                gradient.addColorStop(0.7, rasterColors[colorIndex]);
-                gradient.addColorStop(1, 'transparent');
-
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, y - barHeight, width, barHeight * 2);
-            }
-        }
-
-        function drawSineScroller() {
-            const charWidth = 40;
-            const charHeight = 50;
-            const amplitude = 30;
-            const frequency = 0.05;
-
-            ctx.font = 'bold 48px "Courier New", monospace';
-            ctx.textBaseline = 'middle';
-
-            scrollX -= 3;
-            if (scrollX < -scrollText.length * charWidth) {
-                scrollX = width;
-            }
-
-            for (let i = 0; i < scrollText.length; i++) {
-                const x = scrollX + i * charWidth;
-
-                if (x > -charWidth && x < width + charWidth) {
-                    const sineOffset = Math.sin((x * frequency) + time * 3) * amplitude;
-                    const y = height - 80 + sineOffset;
-
-                    // Color cycling
-                    const hue = (x * 0.5 + time * 50) % 360;
-
-                    // Glow effect
-                    ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-                    ctx.shadowBlur = 20;
-
-                    // Character with gradient
-                    ctx.fillStyle = `hsl(${hue}, 100%, 70%)`;
-                    ctx.fillText(scrollText[i], x, y);
-
-                    // Bright outline
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 1;
-                    ctx.strokeText(scrollText[i], x, y);
-                }
-            }
-
-            ctx.shadowBlur = 0;
-        }
-
-        function drawLogo() {
-            const logoText = 'KEYGEN';
-            const logoY = height / 2 - 50;
-
-            // Bouncing effect
-            const bounce = Math.abs(Math.sin(time * 2)) * 20;
-
-            ctx.font = 'bold 80px "Courier New", monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            // Draw each character with individual effects
-            const chars = logoText.split('');
-            const totalWidth = ctx.measureText(logoText).width;
-            let xPos = width / 2 - totalWidth / 2 + 40;
-
-            chars.forEach((char, i) => {
-                const charBounce = Math.sin(time * 3 + i * 0.5) * 15;
-                const y = logoY - bounce + charBounce;
-
-                // Rainbow color
-                const hue = (i * 60 + time * 100) % 360;
-
-                // Shadow layers for 3D effect
-                for (let s = 5; s > 0; s--) {
-                    ctx.fillStyle = `hsla(${hue}, 100%, ${20 + s * 5}%, 0.5)`;
-                    ctx.fillText(char, xPos + s * 2, y + s * 2);
-                }
-
-                // Main character
-                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
-                ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-                ctx.shadowBlur = 30;
-                ctx.fillText(char, xPos, y);
-
-                // Highlight
-                ctx.fillStyle = '#fff';
-                ctx.globalAlpha = 0.5;
-                ctx.fillText(char, xPos, y - 2);
-                ctx.globalAlpha = 1;
-
-                xPos += ctx.measureText(char).width;
+            const material = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
             });
 
-            ctx.shadowBlur = 0;
-            ctx.textAlign = 'left';
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
         }
 
-        function drawScanlines() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-            for (let y = 0; y < height; y += 4) {
-                ctx.fillRect(0, y, width, 2);
+        function triggerGlitch() {
+            glitchIntensity = 1.0;
+            glitchTimer = 0.3;
+        }
+
+        function onMouseMove(e) {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+        }
+
+        function onTouchMove(e) {
+            if (e.touches.length > 0) {
+                mouseX = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+                mouseY = (e.touches[0].clientY / window.innerHeight) * 2 - 1;
             }
         }
 
-        function drawVignette() {
-            const gradient = ctx.createRadialGradient(
+        function resizeOverlay() {
+            pixelCanvas.width = window.innerWidth;
+            pixelCanvas.height = window.innerHeight;
+        }
+
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            resizeOverlay();
+        }
+
+        function drawPixelDistortion() {
+            const width = pixelCanvas.width;
+            const height = pixelCanvas.height;
+
+            pixelCtx.clearRect(0, 0, width, height);
+
+            // Scanlines
+            pixelCtx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+            for (let y = 0; y < height; y += 3) {
+                pixelCtx.fillRect(0, y, width, 1);
+            }
+
+            // Glitch effect
+            if (glitchIntensity > 0) {
+                // RGB split
+                const offset = glitchIntensity * 10;
+
+                // Horizontal glitch bars
+                for (let i = 0; i < 5 * glitchIntensity; i++) {
+                    const y = Math.random() * height;
+                    const h = Math.random() * 20 + 5;
+                    const shift = (Math.random() - 0.5) * offset * 5;
+
+                    pixelCtx.fillStyle = `rgba(255, 0, 0, ${0.1 * glitchIntensity})`;
+                    pixelCtx.fillRect(shift, y, width, h);
+
+                    pixelCtx.fillStyle = `rgba(0, 255, 255, ${0.1 * glitchIntensity})`;
+                    pixelCtx.fillRect(-shift, y, width, h);
+                }
+
+                // Random pixel blocks
+                for (let i = 0; i < 20 * glitchIntensity; i++) {
+                    const x = Math.random() * width;
+                    const y = Math.random() * height;
+                    const w = Math.random() * 50 + 10;
+                    const h = Math.random() * 10 + 2;
+
+                    const hue = Math.random() * 360;
+                    pixelCtx.fillStyle = `hsla(${hue}, 100%, 50%, ${0.3 * glitchIntensity})`;
+                    pixelCtx.fillRect(x, y, w, h);
+                }
+
+                glitchTimer -= 0.016;
+                if (glitchTimer <= 0) {
+                    glitchIntensity *= 0.9;
+                    if (glitchIntensity < 0.01) glitchIntensity = 0;
+                }
+            }
+
+            // Random mini glitches
+            if (Math.random() < 0.02) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                pixelCtx.fillStyle = `rgba(255, 255, 255, 0.5)`;
+                pixelCtx.fillRect(x, y, Math.random() * 100, 2);
+            }
+
+            // Vignette
+            const gradient = pixelCtx.createRadialGradient(
                 width / 2, height / 2, height / 4,
-                width / 2, height / 2, height
+                width / 2, height / 2, height * 0.8
             );
             gradient.addColorStop(0, 'transparent');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+            pixelCtx.fillStyle = gradient;
+            pixelCtx.fillRect(0, 0, width, height);
 
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, width, height);
-        }
-
-        function drawCopperBars() {
-            // Top copper bar
-            const topGradient = ctx.createLinearGradient(0, 0, width, 0);
-            for (let i = 0; i <= 10; i++) {
-                const hue = (i * 36 + time * 50) % 360;
-                topGradient.addColorStop(i / 10, `hsl(${hue}, 100%, 50%)`);
-            }
-            ctx.fillStyle = topGradient;
-            ctx.fillRect(0, 0, width, 3);
-
-            // Bottom copper bar
-            const bottomGradient = ctx.createLinearGradient(0, 0, width, 0);
-            for (let i = 0; i <= 10; i++) {
-                const hue = (i * 36 - time * 50 + 180) % 360;
-                bottomGradient.addColorStop(i / 10, `hsl(${hue}, 100%, 50%)`);
-            }
-            ctx.fillStyle = bottomGradient;
-            ctx.fillRect(0, height - 3, width, 3);
+            // CRT curve effect (subtle darkening at edges)
+            pixelCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            pixelCtx.beginPath();
+            pixelCtx.rect(0, 0, 5, height);
+            pixelCtx.rect(width - 5, 0, 5, height);
+            pixelCtx.rect(0, 0, width, 5);
+            pixelCtx.rect(0, height - 5, width, 5);
+            pixelCtx.fill();
         }
 
         function animate() {
+            requestAnimationFrame(animate);
+
             time += 0.016;
 
-            // Clear with slight trail
-            ctx.fillStyle = 'rgba(0, 0, 10, 0.3)';
-            ctx.fillRect(0, 0, width, height);
+            // Update shader uniforms
+            torusKnot.material.uniforms.time.value = time;
+            innerShape.material.uniforms.time.value = time;
 
-            // Draw layers
-            drawStarfield();
-            drawPlasma();
-            drawRasterBars();
-            drawLogo();
-            drawSineScroller();
-            drawScanlines();
-            drawVignette();
-            drawCopperBars();
+            // Rotate objects
+            torusKnot.rotation.x += 0.005;
+            torusKnot.rotation.y += 0.01;
+            torusKnot.rotation.z += 0.003;
 
-            requestAnimationFrame(animate);
+            innerShape.rotation.x -= 0.02;
+            innerShape.rotation.y += 0.015;
+
+            // Mouse influence on camera
+            camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 2 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            // Color cycling
+            const hueShift = time * 0.5;
+            torusKnot.material.uniforms.colorA.value.setHSL((hueShift) % 1, 1, 0.5);
+            torusKnot.material.uniforms.colorB.value.setHSL((hueShift + 0.33) % 1, 1, 0.5);
+            torusKnot.material.uniforms.colorC.value.setHSL((hueShift + 0.66) % 1, 1, 0.5);
+
+            // Render
+            renderer.render(scene, camera);
+
+            // Draw overlay effects
+            drawPixelDistortion();
         }
 
         init();
