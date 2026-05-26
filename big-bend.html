@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Bend Trip Guide — Stephen & Lacey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Work+Sans:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --forest: #2D6A4F;
+            --forest-deep: #1B4332;
+            --sage: #74C69D;
+            --sage-light: #B7E4C7;
+            --sage-wash: #E8F5E9;
+            --sand: #F5F0E8;
+            --sand-dark: #E8DFD0;
+            --terra: #C4956A;
+            --terra-dark: #A67B5B;
+            --ink: #1a1a1a;
+            --ink-muted: #555555;
+            --ink-light: #888888;
+            --white: #FEFCF9;
+            --red-alert: #C0392B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Source Serif 4', Georgia, serif;
+            background: var(--sand);
+            color: var(--ink);
+            line-height: 1.7;
+            font-size: 17px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══ HERO ═══ */
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            overflow: hidden;
+            background:
+                linear-gradient(175deg,
+                    #2D6A4F 0%,
+                    #1B4332 25%,
+                    #163B2B 50%,
+                    #1a3a2a 65%,
+                    #C4956A 85%,
+                    #E8DFD0 100%
+                );
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 120% 50% at 80% 20%, rgba(116,198,157,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 80% 40% at 20% 80%, rgba(196,149,106,0.2) 0%, transparent 50%);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to top, var(--sand), transparent);
+            z-index: 1;
+        }
+
+        .hero-mountains {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            height: 300px;
+            z-index: 0;
+        }
+
+        .hero-mountains svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 0 clamp(24px, 6vw, 120px);
+            padding-bottom: clamp(60px, 12vh, 140px);
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--sage-light);
+            border: 1px solid rgba(183, 228, 199, 0.3);
+            padding: 6px 16px;
+            border-radius: 2px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+            background: rgba(45, 106, 79, 0.2);
+        }
+
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            font-size: clamp(3.2rem, 8vw, 6.5rem);
+            line-height: 1;
+            color: var(--white);
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 span {
+            display: block;
+            color: var(--sage-light);
+            font-style: italic;
+            font-size: 0.55em;
+            letter-spacing: 0;
+            margin-top: 8px;
+        }
+
+        .hero-meta {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 14px;
+            color: rgba(254,252,249,0.65);
+            margin-top: 24px;
+            line-height: 1.8;
+        }
+
+        .hero-meta strong {
+            color: rgba(254,252,249,0.9);
+            font-weight: 600;
+        }
+
+        .hero-divider {
+            width: 60px;
+            height: 3px;
+            background: var(--sage);
+            margin-top: 20px;
+            border: none;
+        }
+
+        /* ═══ NAV ═══ */
+
+        .toc {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--forest-deep);
+            border-bottom: 2px solid var(--sage);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .toc::-webkit-scrollbar { display: none; }
+
+        .toc-inner {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-width: max-content;
+        }
+
+        .toc a {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(183, 228, 199, 0.7);
+            text-decoration: none;
+            padding: 14px 16px;
+            white-space: nowrap;
+            transition: color 0.2s, background 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .toc a:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .toc a.active {
+            color: var(--sage-light);
+            border-bottom-color: var(--sage);
+        }
+
+        /* ═══ LAYOUT ═══ */
+
+        .content-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 clamp(20px, 5vw, 60px);
+        }
+
+        section {
+            padding: 72px 0 48px;
+        }
+
+        section + section {
+            border-top: 1px solid var(--sand-dark);
+        }
+
+        /* ═══ SECTION HEADERS ═══ */
+
+        .section-badge {
+            display: inline-block;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--white);
+            background: var(--forest);
+            padding: 5px 14px;
+            border-radius: 3px;
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            color: var(--forest);
+            line-height: 1.15;
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .section-rule {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--forest), transparent);
+            border: none;
+            margin: 12px 0 24px;
+        }
+
+        /* ═══ SUBSECTIONS ═══ */
+
+        .subsection-title {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--forest);
+            margin: 32px 0 10px;
+            letter-spacing: -0.01em;
+        }
+
+        .sub-subsection {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--sage);
+            margin: 24px 0 8px;
+            letter-spacing: -0.005em;
+        }
+
+        /* ═══ TEXT ═══ */
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 1.1rem;
+            color: var(--ink-muted);
+            line-height: 1.75;
+        }
+
+        strong { font-weight: 600; }
+
+        /* ═══ LISTS ═══ */
+
+        ul.guide-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 16px;
+        }
+
+        ul.guide-list > li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 8px;
+            line-height: 1.65;
+        }
+
+        ul.guide-list > li::before {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--sage);
+        }
+
+        /* ═══ CALLOUT BOXES ═══ */
+
+        .callout {
+            background: var(--sage-wash);
+            border-left: 4px solid var(--sage);
+            border-radius: 0 6px 6px 0;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .callout-title {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--forest);
+            margin-bottom: 8px;
+        }
+
+        .callout p, .callout li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .callout ul {
+            list-style: none;
+            padding: 0;
+            margin: 6px 0 0;
+        }
+
+        .callout ul li {
+            padding-left: 18px;
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .callout ul li::before {
+            content: '•';
+            position: absolute;
+            left: 2px;
+            color: var(--forest);
+            font-weight: bold;
+        }
+
+        .callout-alert {
+            background: #FDF0ED;
+            border-left-color: var(--red-alert);
+        }
+
+        .callout-alert .callout-title {
+            color: var(--red-alert);
+        }
+
+        /* ═══ HIKE DIFFICULTY TAGS ═══ */
+
+        .difficulty-tag {
+            display: inline-block;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 12px;
+            border-radius: 3px;
+            margin: 20px 0 8px;
+        }
+
+        .difficulty-easy {
+            background: var(--sage-wash);
+            color: var(--forest);
+        }
+
+        .difficulty-moderate {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .difficulty-strenuous {
+            background: #FFEBEE;
+            color: var(--red-alert);
+        }
+
+        /* ═══ DAY HEADINGS ═══ */
+
+        .day-block {
+            margin: 36px 0 20px;
+            padding: 20px 24px;
+            background: var(--white);
+            border-radius: 8px;
+            border: 1px solid var(--sand-dark);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .day-heading {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--forest);
+            margin-bottom: 4px;
+        }
+
+        .day-subtitle {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--ink-light);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 14px;
+        }
+
+        .day-block ul { margin-top: 8px; }
+
+        /* ═══ STAMP COUNTER ═══ */
+
+        .stamp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .stamp-card {
+            background: var(--white);
+            border: 1px solid var(--sand-dark);
+            border-radius: 6px;
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stamp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--forest);
+        }
+
+        .stamp-card h4 {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--forest);
+            margin-bottom: 6px;
+        }
+
+        .stamp-card p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            color: var(--ink-muted);
+        }
+
+        .stamp-closed {
+            opacity: 0.55;
+        }
+
+        .stamp-closed::before {
+            background: var(--ink-light);
+        }
+
+        /* ═══ CLOSING ═══ */
+
+        .closing-block {
+            text-align: center;
+            padding: 72px 20px 80px;
+            background: linear-gradient(175deg, var(--sand) 0%, var(--sage-wash) 100%);
+            border-top: 1px solid var(--sand-dark);
+        }
+
+        .closing-block h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            color: var(--forest);
+            margin-bottom: 12px;
+        }
+
+        .closing-block p {
+            font-style: italic;
+            color: var(--ink-muted);
+            max-width: 520px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+
+        @media (max-width: 640px) {
+            body { font-size: 16px; }
+
+            .hero { min-height: 90vh; }
+
+            .hero-content {
+                padding-bottom: 60px;
+            }
+
+            section { padding: 48px 0 32px; }
+
+            .toc a {
+                font-size: 11px;
+                padding: 12px 12px;
+            }
+
+            .stamp-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .day-block {
+                padding: 16px 18px;
+            }
+        }
+
+        @media print {
+            .toc { display: none; }
+            .hero { min-height: auto; padding: 40px; }
+            section { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+
+<header class="hero">
+    <svg class="hero-mountains" viewBox="0 0 1440 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 300 L0 180 L120 120 L240 160 L360 80 L480 140 L540 60 L660 130 L780 50 L900 110 L960 70 L1080 130 L1200 90 L1320 150 L1440 100 L1440 300 Z" fill="rgba(27,67,50,0.3)"/>
+        <path d="M0 300 L0 210 L180 150 L300 190 L420 130 L540 170 L660 110 L780 160 L900 120 L1020 180 L1140 140 L1260 190 L1440 130 L1440 300 Z" fill="rgba(196,149,106,0.25)"/>
+    </svg>
+    <div class="hero-content">
+        <div class="hero-badge">May 27 – 31, 2026</div>
+        <h1>Big Bend<span>Trip Guide</span></h1>
+        <hr class="hero-divider">
+        <div class="hero-meta">
+            <strong>Stephen &amp; Lacey</strong><br>
+            Home Base: Terlingua, TX<br>
+            ~530 miles &bull; 5 days &bull; One epic adventure
+        </div>
+    </div>
+</header>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+
+<nav class="toc">
+    <div class="toc-inner">
+        <a href="#overview">Overview</a>
+        <a href="#getting-there">Route</a>
+        <a href="#terlingua">Terlingua</a>
+        <a href="#big-bend">The Park</a>
+        <a href="#stamps">Stamps</a>
+        <a href="#marfa">Marfa</a>
+        <a href="#itinerary">Itinerary</a>
+        <a href="#tips">Tips</a>
+    </div>
+</nav>
+
+<!-- ═══════════════════ CONTENT ═══════════════════ -->
+
+<div class="content-wrap">
+
+<!-- ═══ SECTION 1: OVERVIEW ═══ -->
+
+<section id="overview">
+    <div class="section-badge">Section 1</div>
+    <h2 class="section-title">Trip Overview</h2>
+    <hr class="section-rule">
+
+    <ul class="guide-list">
+        <li>Road trip from Fort Worth, TX — roughly 530–550 miles, about 8–9 hours of driving.</li>
+        <li>Recommended route: I-20 West to Odessa/Midland, then south through Fort Stockton and Marathon to Terlingua.</li>
+        <li>Home base: <strong>Terlingua, TX</strong> — a ghost-town-turned-outpost right at the western entrance of Big Bend National Park.</li>
+    </ul>
+
+    <h3 class="subsection-title">Your Lodging</h3>
+    <ul class="guide-list">
+        <li>Located off <strong>TX-118</strong>, just north of Terlingua / Study Butte.</li>
+        <li>You're minutes from the park's west entrance — no long drives to reach trailheads, Terlingua Ghost Town, or the Barton Warnock Visitor Center.</li>
+    </ul>
+</section>
+
+<!-- ═══ SECTION 2: GETTING THERE ═══ -->
+
+<section id="getting-there">
+    <div class="section-badge">Section 2</div>
+    <h2 class="section-title">Getting There — Road Trip Route</h2>
+    <hr class="section-rule">
+
+    <p class="lead">The drive from Fort Worth to Terlingua is long but rewarding. You'll cross West Texas and watch the landscape transform from rolling plains to open desert to dramatic canyon country.</p>
+
+    <h3 class="subsection-title">The Route</h3>
+    <ul class="guide-list">
+        <li><strong>Fort Worth → Abilene → Midland/Odessa → Fort Stockton → Marathon → Terlingua</strong> — ~530 miles</li>
+        <li>Consider stopping in Midland or Fort Stockton for food and gas on the way down.</li>
+        <li>Keep your gas tank full — this is remote territory. Fill up whenever you see a station.</li>
+        <li>The final stretch from Marathon to Terlingua on TX-118 is about 80 miles of stunning desert driving through Big Bend country.</li>
+    </ul>
+
+    <div class="callout callout-alert">
+        <div class="callout-title">Fuel Warning</div>
+        <p>Gas stations become scarce once you leave I-20. Fill up in Fort Stockton at the latest.</p>
+        <ul>
+            <li>Marathon has a Chevron — your last reliable stop before the final 80-mile stretch to Terlingua.</li>
+            <li>Terlingua/Study Butte has fuel, but stations are small and hours can be unpredictable.</li>
+        </ul>
+    </div>
+
+    <h3 class="subsection-title">Marfa Detour (Optional)</h3>
+    <p>About 60 miles west of Marathon via US-90. An art-world darling planted in the middle of the desert — the Prada Marfa installation is right on the highway. Worth a half-day if you have flexibility; see the <a href="#marfa">Marfa section</a> for the full breakdown.</p>
+</section>
+
+<!-- ═══ SECTION 3: TERLINGUA ═══ -->
+
+<section id="terlingua">
+    <div class="section-badge">Section 3</div>
+    <h2 class="section-title">Your Home Base: Terlingua</h2>
+    <hr class="section-rule">
+
+    <p class="lead">Located just outside Big Bend's western entrance, Terlingua is an experience all its own — a real ghost town turned into one of the most atmospheric hangouts in West Texas. This is where you'll eat, drink, stargaze, and unwind after days in the park.</p>
+
+    <h3 class="subsection-title">Dining &amp; Drinks</h3>
+    <ul class="guide-list">
+        <li><strong>Starlight Theatre</strong> — iconic restaurant and bar in the ghost town. Great food and live music most nights. This will be your go-to evening spot.</li>
+        <li><strong>The Porch</strong> — just outside Starlight Theatre; lively on weekend nights.</li>
+        <li><strong>High Sierra Bar &amp; Grill</strong> — solid food and drinks, more casual vibe.</li>
+        <li><strong>Espresso y Poco Más</strong> — morning coffee and breakfast burritos.</li>
+        <li><strong>Big Bend Brewing Company</strong> — local craft beer.</li>
+        <li><strong>La Posada Milagro</strong> — coffee, baked goods, and light meals with a great patio.</li>
+    </ul>
+
+    <h3 class="subsection-title">Things to See &amp; Do</h3>
+    <ul class="guide-list">
+        <li><strong>Terlingua Ghost Town</strong> — a real abandoned mining town from the late 1800s (not a staged attraction). Roam freely through adobe ruins, mine shafts, old vehicles, and a cemetery. The small hilltop church is particularly atmospheric. Free to explore.</li>
+        <li><strong>Barton Warnock Visitor Center</strong> — start of the River Road; get your Big Bend Ranch State Park passport stamp here; pay the $15 River Road fee here.</li>
+        <li>Unique lodging everywhere — tipis, adobe domes, Airstream trailers. Terlingua attracts a creative, offbeat crowd.</li>
+        <li>Annual Chili Cook-Off held here every November — legendary if timing aligns on a future trip.</li>
+    </ul>
+
+    <h3 class="subsection-title">Stargazing</h3>
+    <p>Terlingua sits in one of the darkest areas in the continental US, within the Greater Big Bend International Dark Sky Reserve. Just step outside at night and look up — the Milky Way is often visible with the naked eye. No telescope needed, no special viewpoint. Just you and an ocean of stars.</p>
+
+    <h3 class="subsection-title">Supplies</h3>
+    <ul class="guide-list">
+        <li>The Study Butte / Terlingua area has a small general store for basics, but don't count on finding everything you need.</li>
+        <li>Stock up on groceries and supplies in Fort Stockton or Marathon on the way down.</li>
+        <li>Bring plenty of water, sunscreen, and snacks for park days.</li>
+    </ul>
+</section>
+
+<!-- ═══ SECTION 4: BIG BEND ═══ -->
+
+<section id="big-bend">
+    <div class="section-badge">Section 4</div>
+    <h2 class="section-title">Big Bend National Park</h2>
+    <hr class="section-rule">
+
+    <h3 class="subsection-title">Entrance Fees</h3>
+    <p>Credit/debit cards only — <strong>NO CASH</strong> accepted at the park.</p>
+    <ul class="guide-list">
+        <li>Per vehicle: $30 (valid 7 days)</li>
+        <li>Annual park pass: $55</li>
+        <li>America the Beautiful pass: $80 (covers ALL national parks for 1 year)</li>
+    </ul>
+
+    <h3 class="subsection-title">Key Visitor Centers (May Hours)</h3>
+    <p><em>Note: Several visitor centers close for summer (May 1 – Oct 31). Plan accordingly.</em></p>
+    <ul class="guide-list">
+        <li><strong>Panther Junction</strong> — main visitor center, open year-round. 8:30am–5pm daily.</li>
+        <li><strong>Chisos Basin</strong> — open year-round. 8:30am–4pm daily (closed for lunch 12–1pm).</li>
+        <li>Castolon — CLOSED May through October.</li>
+        <li>Rio Grande Village — CLOSED May through October.</li>
+        <li>Persimmon Gap — CLOSED May through October.</li>
+    </ul>
+
+    <h3 class="subsection-title">Top Hikes</h3>
+
+    <div class="difficulty-tag difficulty-easy">Easy</div>
+    <ul class="guide-list">
+        <li><strong>Santa Elena Canyon Trail</strong> — 1.6 mi RT, 80 ft gain. Walk into a dramatic canyon with 1,500-ft limestone walls along the Rio Grande. One of the most iconic views in the park. <em>Right near Terlingua — do this first.</em></li>
+        <li><strong>Boquillas Canyon Trail</strong> — 1.2 mi RT. Beautiful sunrise spot; you can see steam rising from the river in cool weather.</li>
+        <li><strong>Hot Springs Trail</strong> — 0.5 mi RT to the hot spring (plus optional 1-mi loop). Leads to the Langford Hot Springs soaking pool. Petroglyphs along the way.</li>
+        <li><strong>Hoodoos Trail</strong> — 1.0 mi loop. Unique rock formations along the Rio Grande; stunning views and great photo ops.</li>
+        <li><strong>Rio Grande Village Nature Trail</strong> — short, flat, great for birding and desert scenery.</li>
+    </ul>
+
+    <div class="difficulty-tag difficulty-moderate">Moderate</div>
+    <ul class="guide-list">
+        <li><strong>Lost Mine Trail</strong> — 4.8 mi RT, 1,100 ft gain. Widely considered the single best day hike in the park. Spectacular views from the Chisos Mountains. Start early — afternoon heat in late May is serious.</li>
+        <li><strong>Grapevine Hills Trail (Balanced Rock)</strong> — 1.6 mi RT. Sandy wash leading to an iconic balanced rock formation. Requires high-clearance vehicle to reach the trailhead.</li>
+        <li><strong>Window Trail</strong> — 5.6 mi RT from Chisos Basin. Descends to a dramatic V-shaped opening with views of the desert below.</li>
+    </ul>
+
+    <div class="difficulty-tag difficulty-strenuous">Strenuous</div>
+    <ul class="guide-list">
+        <li><strong>Emory Peak</strong> — 10.5 mi RT, 2,500 ft gain. Highest peak in Big Bend at 7,825 ft. Takes 6–8 hours; the final 25 feet is a hands-on rock scramble with no ropes. Epic views.</li>
+    </ul>
+
+    <h3 class="subsection-title">Must-Do Experiences</h3>
+
+    <h4 class="sub-subsection">Langford Hot Springs</h4>
+    <p>Free to soak (park entrance fee required). The water stays ~105°F year-round, geothermally heated right along the Rio Grande.</p>
+    <ul class="guide-list">
+        <li>Short 0.5 mi hike from the parking area</li>
+        <li>No soap or oils allowed; bring a swimsuit</li>
+        <li>No cash facilities; bring water; restrooms at Rio Grande Village nearby (Village store is open even when the visitor center is closed)</li>
+        <li>Best visited early morning or evening — late May temps make midday soaking brutal</li>
+    </ul>
+
+
+    <h3 class="subsection-title">Ross Maxwell Scenic Drive</h3>
+    <p>Roughly a 1-hour scenic route through the park toward the Rio Grande and Santa Elena Canyon. One of the most stunning drives in Texas — plan to stop frequently. This drive ends near Terlingua, so it's a natural circuit from your home base.</p>
+
+    <h3 class="subsection-title">River Road (Hwy 170)</h3>
+    <p>Connects Terlingua to Presidio along the Rio Grande. Runs through Big Bend Ranch State Park. Considered one of the most scenic drives in the USA.</p>
+    <ul class="guide-list">
+        <li>$15 fee payable at Barton Warnock Visitor Center in Terlingua.</li>
+    </ul>
+
+    <h3 class="subsection-title">Stargazing in the Park</h3>
+    <p>Big Bend is part of the Greater Big Bend International Dark Sky Reserve — the world's largest certified dark sky area. Some areas rate Bortle Class 1 (the darkest possible).</p>
+    <ul class="guide-list">
+        <li>Best spots: Sotol Vista Overlook, Mule Ears Viewpoint, Santa Elena Canyon, Fossil Discovery Exhibit</li>
+        <li>Milky Way visible March–October; peak visibility in summer — late May is excellent timing.</li>
+        <li>Time your visit around a new moon for the darkest skies.</li>
+        <li>Bring a red flashlight; give your eyes 20 minutes to adjust.</li>
+        <li>Ranger-led night sky programs available — check the park events calendar.</li>
+    </ul>
+</section>
+
+<!-- ═══ SECTION 5: STAMPS ═══ -->
+
+<section id="stamps">
+    <div class="section-badge">Section 5</div>
+    <h2 class="section-title">For the Stamp Collector</h2>
+    <hr class="section-rule">
+
+    <p class="lead"><em>This trip is a serious passport haul — but only if you know where to go and when.</em></p>
+
+    <h3 class="subsection-title">Stamps You Can Get (May 27–31)</h3>
+
+    <div class="stamp-grid">
+        <div class="stamp-card">
+            <h4>1. Big Bend NP — Panther Junction</h4>
+            <p>The main stamp. Open year-round, 8:30am–5pm. Located centrally in the park; you'll pass through it heading to the east side.</p>
+        </div>
+        <div class="stamp-card">
+            <h4>2. Big Bend NP — Chisos Basin</h4>
+            <p>A second Big Bend stamp — same park, different cancellation. Open year-round, 8:30am–4pm (closed 12–1 for lunch). Right near the Lost Mine trailhead.</p>
+        </div>
+        <div class="stamp-card">
+            <h4>3. Big Bend Ranch SP — Barton Warnock</h4>
+            <p>The state park next door has its own passport cancellation stamp. Located in Study Butte/Terlingua area — steps from your home base.</p>
+        </div>
+        <div class="stamp-card">
+            <h4>4. Blackwell School NHS — Marfa</h4>
+            <p>If you make the Marfa detour, this National Historic Site (designated 2022) has a genuinely rare NPS passport stamp.</p>
+        </div>
+    </div>
+
+    <h3 class="subsection-title">Stamps You Cannot Get (Closed in May)</h3>
+
+    <div class="stamp-grid">
+        <div class="stamp-card stamp-closed">
+            <h4>Castolon Visitor Center</h4>
+            <p>Closed May 1 – Oct 31</p>
+        </div>
+        <div class="stamp-card stamp-closed">
+            <h4>Rio Grande Village VC</h4>
+            <p>Closed May 1 – Oct 31</p>
+        </div>
+        <div class="stamp-card stamp-closed">
+            <h4>Persimmon Gap VC</h4>
+            <p>Closed May 1 – Oct 31</p>
+        </div>
+    </div>
+
+    <p><em>Those three will have to wait for a fall or winter trip.</em></p>
+    <p><strong>Total Possible Stamps This Trip: Up to 4</strong> (3 without Marfa, 4 with Marfa detour)</p>
+
+    <div class="callout">
+        <div class="callout-title">Pro Tip</div>
+        <p>Bring the passport book in a ziplock bag or protective sleeve — the desert dust is real. Stamps at the visitor centers are typically self-service ink stamps sitting right on the counter.</p>
+    </div>
+</section>
+
+<!-- ═══ SECTION 6: MARFA ═══ -->
+
+<section id="marfa">
+    <div class="section-badge">Section 6</div>
+    <h2 class="section-title">Marfa (Optional Detour)</h2>
+    <hr class="section-rule">
+
+    <p class="lead">About 100 miles northwest of Terlingua via US-90 through Marathon. Marfa is one of the most unlikely places in America — a tiny high-desert town of roughly 1,800 people that became an internationally recognized art destination.</p>
+
+    <h3 class="subsection-title">The Story</h3>
+    <p>Marfa was just a railroad water stop until minimalist artist Donald Judd moved here in the 1970s, bought up old military buildings, and turned them into permanent art installations. That act of weird conviction slowly attracted galleries, restaurants, boutique hotels, and a steady stream of artists, architects, and curious travelers.</p>
+
+    <h3 class="subsection-title">What to See &amp; Do</h3>
+    <ul class="guide-list">
+        <li><strong>Prada Marfa</strong> — Life-size, non-functional replica of a Prada boutique sitting alone on Hwy 90, about 26 miles northwest of Marfa. A permanent installation containing real Prada items donated by Miuccia Prada. Stop for photos; it takes about 10 minutes.</li>
+        <li><strong>Chinati Foundation</strong> — Donald Judd's life's work. Permanent large-scale installations spread across 340 acres of former military buildings. The 100 untitled aluminum works in two artillery sheds are extraordinary. Guided tours only; book in advance. Allow 2–3 hours.</li>
+        <li><strong>Judd Foundation</strong> — Separate from Chinati. Tours of Judd's private downtown studios and residences. Also requires advance booking. More intimate.</li>
+        <li><strong>Marfa Mystery Lights</strong> — Viewing area on Hwy 90 east of town, about 9 miles out. After dark, unexplained lights appear on the horizon — a genuine phenomenon reported since the 1800s. No confirmed explanation. Worth 20 minutes if you're there at night.</li>
+        <li><strong>Blackwell School National Historic Site</strong> — A former school that served Mexican American children during segregation in Marfa (1909–1965). Now a National Historic Site and small museum — and home to a rare NPS passport stamp.</li>
+        <li><strong>John Cerney Giant Highway Art</strong> — Oversized roadside billboard art featuring James Dean, Elizabeth Taylor, and Rock Hudson from the classic Texas film <em>Giant</em>. Unmissable on the drive.</li>
+        <li><strong>Planet Marfa</strong> — Outdoor bar with a teepee structure, fire pits, and string lights. Great casual hangout, especially in the evening.</li>
+    </ul>
+
+    <h3 class="subsection-title">Where to Eat</h3>
+    <ul class="guide-list">
+        <li><strong>Marfa Burrito (Ramona's kitchen)</strong> — Legendary breakfast burritos made from a home kitchen. Cash only, limited hours.</li>
+        <li><strong>Al Campo</strong> — Solid, unpretentious food; popular with locals and visitors alike.</li>
+        <li><strong>LaVenture at Hotel Saint George</strong> — The nicest sit-down dinner option in town.</li>
+    </ul>
+
+    <h3 class="subsection-title">Verdict</h3>
+    <p>It's a 100-mile drive from Terlingua, so it's a real commitment — best paired with the drive day in or out. If you want the full Chinati/Judd experience, budget a half-day and book tours in advance. If time is tight, just hit Prada Marfa + one meal on your way through. The Blackwell School stamp is worth the stop on its own.</p>
+
+    <div class="callout">
+        <div class="callout-title">Marathon (Along the Way)</div>
+        <p>If you drive to Marfa via US-90, you'll pass through Marathon (pop. ~386). Worth a quick stop if you have time: <strong>Brick Vault BBQ</strong> (award-winning), <strong>Gage Restaurant</strong> (upscale steak and game), and <strong>Gage Gardens</strong> (26-acre landscaped oasis) are the highlights. The <strong>White Buffalo Bar</strong> is a great drinks stop. Otherwise, keep driving.</p>
+    </div>
+</section>
+
+<!-- ═══ SECTION 7: ITINERARY ═══ -->
+
+<section id="itinerary">
+    <div class="section-badge">Section 7</div>
+    <h2 class="section-title">Suggested Itinerary</h2>
+    <hr class="section-rule">
+
+    <p><strong>5 Days / 4 Nights — May 27–31</strong></p>
+    <p><em>Built around a relaxed pace. Adjust as you go.</em></p>
+
+    <div class="day-block">
+        <div class="day-subtitle">Day 1</div>
+        <h3 class="day-heading">Wednesday, May 27 — Drive Day</h3>
+        <ul class="guide-list">
+            <li>Leave Fort Worth — ~8–9 hours to Terlingua.</li>
+            <li>Stop in Midland or Fort Stockton for food and gas.</li>
+            <li>Optional: swing through Marfa if you arrive before sunset (Prada Marfa is right on US-90, about 60 miles before Terlingua).</li>
+            <li>Arrive at your lodging on TX-118. Walk over to Starlight Theatre or The Porch for dinner.</li>
+            <li>Settle in. Step outside and look up — that's your preview of what's coming.</li>
+        </ul>
+    </div>
+
+    <div class="day-block">
+        <div class="day-subtitle">Day 2</div>
+        <h3 class="day-heading">Thursday, May 28 — Big Bend: Canyons &amp; Hot Springs</h3>
+        <ul class="guide-list">
+            <li>Enter the park early — heat builds quickly in late May. You're minutes from the west entrance.</li>
+            <li><strong>Santa Elena Canyon Trail</strong> (1.6 mi, easy) — closest iconic hike to Terlingua. Do this first while it's cool.</li>
+            <li>Ross Maxwell Scenic Drive — stop frequently for views.</li>
+            <li><strong>Panther Junction Visitor Center — GET YOUR FIRST PASSPORT STAMP.</strong></li>
+            <li>Continue east to <strong>Langford Hot Springs</strong> — aim for late afternoon when temps drop.</li>
+            <li>Back to Terlingua for dinner at Starlight Theatre.</li>
+        </ul>
+    </div>
+
+    <div class="day-block">
+        <div class="day-subtitle">Day 3</div>
+        <h3 class="day-heading">Friday, May 29 — Chisos Mountains &amp; East Side</h3>
+        <ul class="guide-list">
+            <li>Head into the park early — today is your big hiking day.</li>
+            <li><strong>Chisos Basin Visitor Center — GET YOUR SECOND STAMP.</strong></li>
+            <li><strong>Lost Mine Trail</strong> (4.8 mi, moderate) — start before 10am, bring lots of water. The best day hike in the park.</li>
+            <li>Afternoon: drive east to <strong>Rio Grande Village</strong> area — Boquillas Canyon Trail (1.2 mi, easy) and birding along the river.</li>
+            <li>Evening back in Terlingua — explore the ghost town at sunset, drinks at The Porch.</li>
+        </ul>
+    </div>
+
+    <div class="day-block">
+        <div class="day-subtitle">Day 4</div>
+        <h3 class="day-heading">Saturday, May 30 — River Road &amp; Flex Day</h3>
+        <ul class="guide-list">
+            <li><strong>Barton Warnock Visitor Center — GET YOUR BIG BEND RANCH STATE PARK STAMP.</strong> This is right in your backyard.</li>
+            <li>Drive the <strong>River Road (Hwy 170)</strong> along the Rio Grande — one of the most scenic drives in the USA.</li>
+            <li>Afternoon: revisit anything you want more time with — another hike, a second soak at the hot springs, or just rest.</li>
+            <li>One last night of world-class stargazing from Terlingua.</li>
+        </ul>
+    </div>
+
+    <div class="day-block">
+        <div class="day-subtitle">Day 5</div>
+        <h3 class="day-heading">Sunday, May 31 — Head Home</h3>
+        <ul class="guide-list">
+            <li>Morning coffee at Espresso y Poco Más.</li>
+            <li>Begin the drive back to Fort Worth via Marathon and US-90.</li>
+            <li>Optional stop in Marfa on the way home (Prada Marfa + Blackwell School stamp if you want it).</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ═══ SECTION 8: TIPS ═══ -->
+
+<section id="tips">
+    <div class="section-badge">Section 8</div>
+    <h2 class="section-title">Practical Tips</h2>
+    <hr class="section-rule">
+
+    <ul class="guide-list">
+        <li><strong>CASH:</strong> Big Bend does NOT accept cash for entrance fees — bring credit/debit cards. However, carry cash for tips in Terlingua. Marfa Burrito is cash-only.</li>
+        <li><strong>WATER:</strong> Carry far more than you think you need. Late May temps can exceed 100°F. At least 1 liter per person per hour of hiking. Non-negotiable.</li>
+        <li><strong>GAS:</strong> Fill up whenever you see a station. The Terlingua/Study Butte area has fuel but stations are small. Fill up in Fort Stockton or Marathon on your way down to be safe.</li>
+        <li><strong>CELL SERVICE:</strong> Extremely limited inside the park and much of the region. Download offline maps (Google Maps or Maps.me) before you leave cell range. Tell someone your general plan.</li>
+        <li><strong>HEAT:</strong> Late May is hot. Hike before 10am. Rest midday. Resume in the late afternoon. This is not a suggestion.</li>
+        <li><strong>VEHICLE:</strong> A regular passenger car is fine for most park roads. Grapevine Hills and River Road benefit from higher clearance. Check NPS road conditions before heading out.</li>
+        <li><strong>RESERVATIONS:</strong> Chinati Foundation tours in Marfa require advance booking.</li>
+        <li><strong>SUNSCREEN &amp; LAYERS:</strong> The desert is brutal during the day and can get surprisingly cold at night. The Chisos Mountains especially.</li>
+        <li><strong>WILDLIFE:</strong> Watch for javelinas, roadrunners, black bears (yes, really), mountain lions (rare), rattlesnakes, and countless bird species. Don't feed wildlife and watch where you step.</li>
+    </ul>
+</section>
+
+</div><!-- .content-wrap -->
+
+<!-- ═══ CLOSING ═══ -->
+
+<div class="closing-block">
+    <h3>Have an amazing trip.</h3>
+    <p>Big Bend is one of those places that stays with you. The scale of the landscape, the silence, the stars — there's nothing quite like it.</p>
+</div>
+
+<!-- ═══ SCROLL SPY ═══ -->
+
+<script>
+    const tocLinks = document.querySelectorAll('.toc a');
+    const sections = document.querySelectorAll('section[id]');
+
+    function updateActiveLink() {
+        let current = '';
+        const offset = 80;
+
+        sections.forEach(section => {
+            const top = section.offsetTop - offset;
+            if (window.scrollY >= top) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        tocLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    updateActiveLink();
+</script>
+
+</body>
+</html>
