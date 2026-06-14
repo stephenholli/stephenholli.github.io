@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lacey's 40th — Broken Bow Weekend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f0e6;--bg-hero:#1a2e1f;--text:#2a2a28;--text-light:#6b6860;
+  --accent:#b8863a;--accent-light:#d4a85a;--green:#3a6b4a;--green-deep:#1a3a2a;
+  --green-light:#e8efe6;--card:#ffffff;--border:#d9d0c0;--border-light:#ece6d8;
+  --shadow:0 2px 20px rgba(26,46,31,.08);--shadow-hover:0 8px 32px rgba(26,46,31,.12);
+  --radius:12px;--nav-h:60px;
+}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 20px)}
+body{font-family:'DM Sans',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'DM Serif Display',Georgia,serif;font-weight:400;line-height:1.2}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(245,240,230,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);z-index:100;display:flex;align-items:center;padding:0 clamp(16px,4vw,48px);transition:transform .3s ease,box-shadow .3s ease}
+nav.hidden{transform:translateY(-100%)}
+nav.shadow{box-shadow:0 1px 12px rgba(0,0,0,.06)}
+.nav-inner{max-width:1200px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--green-deep);white-space:nowrap}
+.nav-links{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{font-size:.78rem;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--text-light);text-decoration:none;padding:6px 12px;border-radius:99px;white-space:nowrap;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--green-deep);background:var(--green-light)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;min-height:100svh;background:var(--bg-hero);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(58,107,74,.3) 0%,transparent 60%),radial-gradient(ellipse at 20% 20%,rgba(184,134,58,.1) 0%,transparent 50%);pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:700px}
+.hero-tag{display:inline-block;font-size:.75rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-light);border:1px solid rgba(184,134,58,.3);padding:8px 20px;border-radius:99px;margin-bottom:32px;opacity:0;animation:fadeUp .8s .3s forwards}
+.hero h1{font-size:clamp(2.8rem,7vw,5.2rem);color:#f5f0e6;margin-bottom:16px;opacity:0;animation:fadeUp .8s .5s forwards}
+.hero h1 em{font-style:italic;color:var(--accent-light)}
+.hero-sub{font-size:clamp(1rem,2.5vw,1.25rem);color:rgba(245,240,230,.6);margin-bottom:48px;opacity:0;animation:fadeUp .8s .7s forwards}
+.hero-details{display:flex;flex-wrap:wrap;gap:32px;justify-content:center;opacity:0;animation:fadeUp .8s .9s forwards}
+.hero-detail{text-align:center}
+.hero-detail-label{font-size:.65rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-light);margin-bottom:4px}
+.hero-detail-value{font-family:'DM Serif Display',serif;font-size:1.15rem;color:#f5f0e6}
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);opacity:0;animation:fadeUp .8s 1.2s forwards}
+.hero-scroll span{display:block;width:24px;height:38px;border:2px solid rgba(245,240,230,.3);border-radius:12px;position:relative}
+.hero-scroll span::after{content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);width:4px;height:8px;background:rgba(245,240,230,.4);border-radius:2px;animation:scrollDot 1.8s ease-in-out infinite}
+
+/* ── SECTIONS ── */
+.section{padding:clamp(60px,10vw,100px) clamp(20px,5vw,48px);max-width:1100px;margin:0 auto}
+.section-label{font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.section-title{font-size:clamp(2rem,4.5vw,3rem);margin-bottom:12px;color:var(--green-deep)}
+.section-intro{font-size:1.05rem;color:var(--text-light);max-width:600px;margin-bottom:48px;line-height:1.7}
+
+/* ── ESSENTIALS BAR ── */
+.essentials{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:clamp(24px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;box-shadow:var(--shadow);margin-top:-60px;position:relative;z-index:2}
+.essential-item{display:flex;gap:14px;align-items:flex-start}
+.essential-icon{width:40px;height:40px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem}
+.essential-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:2px}
+.essential-value{font-size:.95rem;font-weight:500;color:var(--text)}
+.essential-value small{font-weight:400;color:var(--text-light);font-size:.8rem}
+
+/* ── EXPANDABLE ── */
+.expandable{border:1px solid var(--border-light);border-radius:var(--radius);background:var(--card);overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.03);transition:box-shadow .3s}
+.expandable:hover{box-shadow:var(--shadow)}
+.expandable-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;cursor:pointer;user-select:none;gap:12px;transition:background .2s}
+.expandable-header:hover{background:var(--green-light)}
+.expandable-header h3{font-size:1.15rem;color:var(--green-deep)}
+.expandable-header .tag{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:var(--green-light);color:var(--green);white-space:nowrap}
+.expandable-chevron{width:20px;height:20px;flex-shrink:0;transition:transform .3s ease;color:var(--text-light)}
+.expandable.open .expandable-chevron{transform:rotate(180deg)}
+.expandable-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.expandable-body-inner{padding:0 24px 24px}
+
+/* ── RESTAURANT CARDS ── */
+.restaurant-grid{display:grid;gap:16px}
+.restaurant-card{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;transition:all .3s;cursor:pointer}
+.restaurant-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.restaurant-card-header{padding:20px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.restaurant-card-header h4{font-size:1.1rem;color:var(--green-deep);margin-bottom:4px}
+.restaurant-card-header p{font-size:.88rem;color:var(--text-light);line-height:1.5}
+.restaurant-badge{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:.65rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.badge-drive{background:var(--green-light);color:var(--green)}
+.badge-warn{background:#fff3e0;color:#e65100}
+.badge-closed{background:#fce4ec;color:#c62828}
+.badge-birthday{background:linear-gradient(135deg,#f5e6d0,#ede0cd);color:var(--accent)}
+.restaurant-card-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.restaurant-card-body-inner{padding:0 24px 20px;border-top:1px solid var(--border-light)}
+.restaurant-card.open .restaurant-card-body-inner{padding-top:16px}
+.restaurant-detail{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:.88rem;margin-bottom:8px}
+.restaurant-detail dt{font-weight:600;color:var(--text-light);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
+.restaurant-detail dd{color:var(--text)}
+.restaurant-detail dd.warn{color:#e65100;font-weight:500}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:48px}
+.timeline::before{content:'';position:absolute;left:19px;top:8px;bottom:8px;width:2px;background:var(--border);border-radius:1px}
+.timeline-day{margin-bottom:40px}
+.timeline-day:last-child{margin-bottom:0}
+.timeline-day-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--green-deep);margin-bottom:20px;position:relative}
+.timeline-day-title::before{content:'';position:absolute;left:-33px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--accent)}
+.timeline-item{display:flex;gap:16px;margin-bottom:14px;font-size:.92rem;position:relative;padding-left:4px}
+.timeline-item::before{content:'';position:absolute;left:-30px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--border)}
+.timeline-time{font-weight:600;color:var(--accent);white-space:nowrap;min-width:110px}
+.timeline-desc{color:var(--text)}
+.timeline-desc.tbd{color:var(--text-light);font-style:italic}
+
+/* ── VIBE CARDS ── */
+.vibe-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.vibe-card{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:28px 24px;transition:all .3s;position:relative;overflow:hidden}
+.vibe-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-3px)}
+.vibe-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.vibe-card:nth-child(1)::before{background:linear-gradient(90deg,#b8863a,#d4a85a)}
+.vibe-card:nth-child(2)::before{background:linear-gradient(90deg,#3a6b4a,#5a9b6a)}
+.vibe-card:nth-child(3)::before{background:linear-gradient(90deg,#6b4a3a,#9b7a5a)}
+.vibe-card:nth-child(4)::before{background:linear-gradient(90deg,#4a3a6b,#7a5a9b)}
+.vibe-emoji{font-size:1.8rem;margin-bottom:12px;display:block}
+.vibe-card h4{font-size:1.15rem;color:var(--green-deep);margin-bottom:14px}
+.vibe-card ul{list-style:none;font-size:.88rem}
+.vibe-card li{padding:6px 0;color:var(--text-light);display:flex;gap:8px;align-items:baseline}
+.vibe-card li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--border);flex-shrink:0;margin-top:6px}
+.vibe-card li strong{color:var(--text);font-weight:500}
+
+/* ── WINERY CARDS ── */
+.winery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.winery-card{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:24px;transition:all .3s}
+.winery-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.winery-card h4{font-size:1.05rem;color:var(--green-deep);margin-bottom:4px}
+.winery-card .winery-type{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:10px}
+.winery-card p{font-size:.88rem;color:var(--text-light);line-height:1.6}
+.winery-card .winery-highlight{background:var(--green-light);color:var(--green);font-size:.82rem;font-weight:500;padding:8px 12px;border-radius:8px;margin-top:12px;display:inline-block}
+
+/* ── ACTIVITY CARDS ── */
+.activity-section{margin-bottom:32px}
+.activity-section h3{font-size:1.3rem;color:var(--green-deep);margin-bottom:6px}
+.activity-section .activity-meta{font-size:.88rem;color:var(--text-light);margin-bottom:16px}
+.activity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.activity-item{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:18px 20px;transition:all .2s}
+.activity-item:hover{box-shadow:var(--shadow)}
+.activity-item h4{font-size:.95rem;color:var(--green-deep);margin-bottom:6px}
+.activity-item p{font-size:.84rem;color:var(--text-light);line-height:1.5}
+.activity-item .price{font-weight:600;color:var(--accent);font-size:.82rem;margin-top:8px}
+.activity-item .contact{font-size:.78rem;color:var(--text-light);margin-top:4px}
+
+/* ── WEATHER WIDGET ── */
+.weather-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px}
+.weather-item{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;text-align:center}
+.weather-item .weather-icon{font-size:2rem;margin-bottom:8px}
+.weather-item .weather-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:4px}
+.weather-item .weather-value{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--green-deep)}
+.weather-item .weather-note{font-size:.78rem;color:var(--text-light);margin-top:4px}
+
+/* ── CHECKLIST ── */
+.checklist{columns:2;column-gap:24px;list-style:none}
+.checklist li{break-inside:avoid;padding:10px 0;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:10px;font-size:.92rem;cursor:pointer;transition:opacity .2s}
+.checklist li.checked{opacity:.4;text-decoration:line-through}
+.checklist input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;cursor:pointer;transition:all .2s;position:relative}
+.checklist input[type="checkbox"]:checked{background:var(--green);border-color:var(--green)}
+.checklist input[type="checkbox"]:checked::after{content:'';position:absolute;left:5px;top:2px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.checklist-section{font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);padding:16px 0 4px;border-bottom:none!important;cursor:default}
+
+/* ── GROCERY TABLE ── */
+.grocery-grid{display:grid;gap:12px}
+.grocery-item{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:all .2s}
+.grocery-item:hover{box-shadow:var(--shadow)}
+.grocery-item h4{font-size:.95rem;color:var(--green-deep);margin-bottom:2px}
+.grocery-item p{font-size:.82rem;color:var(--text-light)}
+.grocery-item .grocery-distance{font-size:.78rem;font-weight:600;color:var(--accent);white-space:nowrap;background:var(--green-light);padding:4px 10px;border-radius:99px}
+
+/* ── ENTERTAINMENT ── */
+.ent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.ent-item{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;text-align:center;transition:all .2s}
+.ent-item:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.ent-item .ent-icon{font-size:1.6rem;margin-bottom:8px}
+.ent-item h4{font-size:.92rem;color:var(--green-deep);margin-bottom:4px}
+.ent-item p{font-size:.8rem;color:var(--text-light)}
+.ent-item .price{font-weight:600;color:var(--accent);font-size:.82rem;margin-top:6px}
+
+/* ── CABIN FEATURES ── */
+.cabin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.cabin-feature{display:flex;gap:14px;align-items:flex-start;padding:16px 0}
+.cabin-feature-icon{width:36px;height:36px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+.cabin-feature h4{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.cabin-feature p{font-size:.84rem;color:var(--text-light)}
+
+/* ── ROOM TABLE ── */
+.room-grid{display:grid;gap:8px;margin-top:16px}
+.room-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--green-light);border-radius:8px;font-size:.88rem}
+.room-floor{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);min-width:20px}
+.room-desc{color:var(--text)}
+.room-bath{color:var(--green);font-weight:500;margin-left:auto;font-size:.82rem;white-space:nowrap}
+
+/* ── CASINO ── */
+.casino-card{background:linear-gradient(135deg,var(--green-deep),#0d1f14);border-radius:var(--radius);padding:clamp(24px,4vw,40px);color:#f5f0e6;position:relative;overflow:hidden}
+.casino-card::after{content:'';position:absolute;top:-30%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(184,134,58,.15) 0%,transparent 70%);pointer-events:none}
+.casino-card h3{font-size:1.5rem;color:#f5f0e6;margin-bottom:6px}
+.casino-card .casino-sub{font-size:.88rem;color:rgba(245,240,230,.6);margin-bottom:20px}
+.casino-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;position:relative;z-index:1}
+.casino-feature{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px}
+.casino-feature h4{font-size:.85rem;color:var(--accent-light);margin-bottom:4px}
+.casino-feature p{font-size:.84rem;color:rgba(245,240,230,.7)}
+
+/* ── CONTACTS & COST ── */
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.detail-card{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:24px}
+.detail-card h3{font-size:1.1rem;color:var(--green-deep);margin-bottom:16px}
+.detail-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-light);font-size:.9rem}
+.detail-row:last-child{border-bottom:none}
+.detail-row .label{color:var(--text-light)}
+.detail-row .value{font-weight:500;color:var(--text)}
+.detail-row .value a{color:var(--green);text-decoration:none}
+
+/* ── BOOKING CHECKLIST ── */
+.booking-list{list-style:none;margin-top:16px}
+.booking-list li{padding:12px 0;border-bottom:1px solid var(--border-light);font-size:.9rem;display:flex;align-items:center;gap:10px}
+.booking-list li::before{content:'';width:8px;height:8px;border-radius:50%;border:2px solid var(--border);flex-shrink:0}
+
+/* ── WINE TOUR CALLOUT ── */
+.callout{background:linear-gradient(135deg,var(--green-light),#dfe8dc);border:1px solid rgba(58,107,74,.15);border-radius:var(--radius);padding:24px;margin-top:24px;display:flex;gap:16px;align-items:flex-start}
+.callout-icon{font-size:1.5rem;flex-shrink:0}
+.callout h4{font-size:1rem;color:var(--green-deep);margin-bottom:4px}
+.callout p{font-size:.88rem;color:var(--text-light);line-height:1.6}
+
+/* ── CONCIERGE ── */
+.concierge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px}
+.concierge-item{background:var(--green-light);border-radius:8px;padding:16px;text-align:center}
+.concierge-item .c-icon{font-size:1.2rem;margin-bottom:6px}
+.concierge-item p{font-size:.84rem;color:var(--text)}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:48px 24px;color:var(--text-light);font-size:.82rem;border-top:1px solid var(--border-light)}
+footer strong{color:var(--green-deep)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scrollDot{0%,20%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(16px)}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-brand{display:none}
+  .nav-links{width:100%;justify-content:center}
+  .essentials{grid-template-columns:1fr 1fr;margin-top:-40px}
+  .checklist{columns:1}
+  .timeline{padding-left:36px}
+  .timeline-item{flex-direction:column;gap:4px}
+  .timeline-time{min-width:unset}
+  .hero-details{gap:20px}
+  .vibe-grid{grid-template-columns:1fr}
+  .casino-features{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .essentials{grid-template-columns:1fr}
+  .restaurant-card-header{flex-direction:column}
+  .restaurant-badge{justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">Broken Bow '26</div>
+    <div class="nav-links">
+      <a href="#essentials">Essentials</a>
+      <a href="#cabin">Cabin</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#eat">Eat</a>
+      <a href="#drink">Drink</a>
+      <a href="#adventure">Adventure</a>
+      <a href="#fun">Fun</a>
+      <a href="#vibes">Vibes</a>
+      <a href="#pack">Pack</a>
+      <a href="#details">Details</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="hero-content">
+    <span class="hero-tag">September 25 — 27, 2026</span>
+    <h1>Lacey's <em>40th</em></h1>
+    <p class="hero-sub">A birthday weekend in the pines &mdash; Broken Bow, Oklahoma</p>
+    <div class="hero-details">
+      <div class="hero-detail">
+        <div class="hero-detail-label">Where</div>
+        <div class="hero-detail-value">Pining for Pinot</div>
+      </div>
+      <div class="hero-detail">
+        <div class="hero-detail-label">When</div>
+        <div class="hero-detail-value">Fri &ndash; Sun</div>
+      </div>
+      <div class="hero-detail">
+        <div class="hero-detail-label">Guests</div>
+        <div class="hero-detail-value">4 Couples</div>
+      </div>
+      <div class="hero-detail">
+        <div class="hero-detail-label">Drive</div>
+        <div class="hero-detail-value">~3 hrs from DFW</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll"><span></span></div>
+</header>
+
+<!-- ═══ ESSENTIALS ═══ -->
+<section class="section" id="essentials">
+  <div class="essentials reveal">
+    <div class="essential-item">
+      <div class="essential-icon">&#x1f4cd;</div>
+      <div>
+        <div class="essential-label">Address</div>
+        <div class="essential-value">148 Pinehurst Lane<br><small>Broken Bow, OK 74728</small></div>
+      </div>
+    </div>
+    <div class="essential-item">
+      <div class="essential-icon">&#x1f511;</div>
+      <div>
+        <div class="essential-label">Check-in / Out</div>
+        <div class="essential-value">Fri 4:00 PM &rarr; Sun 10:00 AM<br><small>Smart lock &middot; self check-in</small></div>
+      </div>
+    </div>
+    <div class="essential-item">
+      <div class="essential-icon">&#x1f697;</div>
+      <div>
+        <div class="essential-label">Route from DFW</div>
+        <div class="essential-value">I-30 E &rarr; US-259 N<br><small>Exit 178 near DeKalb, TX</small></div>
+      </div>
+    </div>
+    <div class="essential-item">
+      <div class="essential-icon">&#x1f4de;</div>
+      <div>
+        <div class="essential-label">Host (Deidre)</div>
+        <div class="essential-value">(214) 213-4994<br><small>Cabin questions &amp; concierge</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CABIN ═══ -->
+<section class="section" id="cabin">
+  <div class="reveal">
+    <div class="section-label">The Cabin</div>
+    <h2 class="section-title">Pining for Pinot</h2>
+    <p class="section-intro">6-bedroom luxury cabin sleeping up to 20, surrounded by towering pines with direct ATV trail access.</p>
+  </div>
+
+  <div class="cabin-grid reveal">
+    <div class="cabin-feature"><div class="cabin-feature-icon">&#x2668;</div><div><h4>Hot Tub & Fire Pit</h4><p>Hot tub under the pines, oversized fire pit with firewood included</p></div></div>
+    <div class="cabin-feature"><div class="cabin-feature-icon">&#x1f373;</div><div><h4>Full Chef's Kitchen</h4><p>Cookware, bakeware, blender, Keurig with pods</p></div></div>
+    <div class="cabin-feature"><div class="cabin-feature-icon">&#x1f3ae;</div><div><h4>Game Loft</h4><p>Arcade games, poker table, ping pong, cornhole</p></div></div>
+    <div class="cabin-feature"><div class="cabin-feature-icon">&#x1f4f6;</div><div><h4>Connected</h4><p>Smart TVs in every room, high-speed Wi-Fi</p></div></div>
+    <div class="cabin-feature"><div class="cabin-feature-icon">&#x1f3d5;</div><div><h4>ATV Trail Access</h4><p>Direct trail access from the property — no trailer needed</p></div></div>
+    <div class="cabin-feature"><div class="cabin-feature-icon">&#x1f37e;</div><div><h4>Welcome Gifts</h4><p>Complimentary Girls Gone Wine bottle + gourmet charcuterie board</p></div></div>
+  </div>
+
+  <div class="expandable reveal" style="margin-top:24px">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>Room Inventory</h3>
+      <span class="tag">6 Bedrooms</span>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body"><div class="expandable-body-inner">
+      <div class="room-grid">
+        <div class="room-item"><span class="room-floor">1F</span><span class="room-desc">King bedroom</span><span class="room-bath">En-suite bath</span></div>
+        <div class="room-item"><span class="room-floor">1F</span><span class="room-desc">King bedroom</span><span class="room-bath">En-suite bath</span></div>
+        <div class="room-item"><span class="room-floor">1F</span><span class="room-desc">King bedroom</span><span class="room-bath">Full bath nearby</span></div>
+        <div class="room-item"><span class="room-floor">2F</span><span class="room-desc">King bedroom</span><span class="room-bath">En-suite bath</span></div>
+        <div class="room-item"><span class="room-floor">2F</span><span class="room-desc">King bedroom</span><span class="room-bath">No en-suite</span></div>
+        <div class="room-item"><span class="room-floor">2F</span><span class="room-desc">Bunk room &mdash; sleeps 10 (6 twins, 2 fulls)</span><span class="room-bath">Full bath</span></div>
+      </div>
+      <p style="font-size:.84rem;color:var(--text-light);margin-top:12px;font-style:italic">Room assignments TBD once guest list is confirmed.</p>
+    </div></div>
+  </div>
+
+  <div class="expandable reveal">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>House Rules</h3>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body"><div class="expandable-body-inner">
+      <div style="display:grid;gap:8px;font-size:.9rem">
+        <div><strong>Quiet hours:</strong> 10 PM &ndash; 6 AM</div>
+        <div><strong>No smoking:</strong> Indoors = $500 fee</div>
+        <div><strong>No pets</strong></div>
+        <div><strong>No parties/events</strong> &mdash; we're fine, group gathering not a rager</div>
+        <div><strong>Max guests:</strong> 20</div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ═══ SCHEDULE ═══ -->
+<section class="section" id="schedule">
+  <div class="reveal">
+    <div class="section-label">The Weekend</div>
+    <h2 class="section-title">Schedule</h2>
+    <p class="section-intro">A loose framework &mdash; the birthday girl sets the real pace.</p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="timeline-day">
+      <div class="timeline-day-title">Friday &mdash; Arrive &amp; Settle In</div>
+      <div class="timeline-item"><span class="timeline-time">~1:00 PM</span><span class="timeline-desc">Caravan leaves DFW (or stagger departures)</span></div>
+      <div class="timeline-item"><span class="timeline-time">4:00 PM</span><span class="timeline-desc">Check-in opens</span></div>
+      <div class="timeline-item"><span class="timeline-time">4:00–6:00 PM</span><span class="timeline-desc">Arrive, unpack, explore the cabin, hot tub</span></div>
+      <div class="timeline-item"><span class="timeline-time">6:00–8:00 PM</span><span class="timeline-desc tbd">Dinner &mdash; eat out or cook in? TBD</span></div>
+      <div class="timeline-item"><span class="timeline-time">8:00 PM+</span><span class="timeline-desc">Fire pit, drinks, games, settle in</span></div>
+    </div>
+    <div class="timeline-day">
+      <div class="timeline-day-title">Saturday &mdash; The Main Event</div>
+      <div class="timeline-item"><span class="timeline-time">Morning</span><span class="timeline-desc">Breakfast at cabin, coffee</span></div>
+      <div class="timeline-item"><span class="timeline-time">Late Morning</span><span class="timeline-desc tbd">Group activity &mdash; TBD</span></div>
+      <div class="timeline-item"><span class="timeline-time">Afternoon</span><span class="timeline-desc tbd">Free time / second activity &mdash; TBD</span></div>
+      <div class="timeline-item"><span class="timeline-time">Evening</span><span class="timeline-desc tbd">Birthday dinner &mdash; TBD</span></div>
+      <div class="timeline-item"><span class="timeline-time">Night</span><span class="timeline-desc">Birthday celebration at the cabin</span></div>
+    </div>
+    <div class="timeline-day">
+      <div class="timeline-day-title">Sunday &mdash; Pack Up</div>
+      <div class="timeline-item"><span class="timeline-time">8:00–9:00 AM</span><span class="timeline-desc">Wake up, coffee, light breakfast</span></div>
+      <div class="timeline-item"><span class="timeline-time">9:00–10:00 AM</span><span class="timeline-desc">Pack up, clean up, load cars</span></div>
+      <div class="timeline-item"><span class="timeline-time">10:00 AM</span><span class="timeline-desc">Checkout</span></div>
+      <div class="timeline-item"><span class="timeline-time">10:00 AM+</span><span class="timeline-desc tbd">Optional stop on the way home</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ RESTAURANTS ═══ -->
+<section class="section" id="eat">
+  <div class="reveal">
+    <div class="section-label">Where to Eat</div>
+    <h2 class="section-title">Restaurants</h2>
+    <p class="section-intro">Most spots are clustered along Hwy 259 in Hochatown, 10-15 minutes from the cabin. Reservations recommended for a group of 8.</p>
+  </div>
+
+  <div class="restaurant-grid reveal">
+
+    <div class="restaurant-card" onclick="toggleCard(this)">
+      <div class="restaurant-card-header">
+        <div>
+          <h4>Abendigo's Grill &amp; Patio</h4>
+          <p>Wood-grilled steaks, seafood, wine &amp; cocktails</p>
+        </div>
+        <div class="restaurant-badge">
+          <span class="badge badge-birthday">Birthday Pick</span>
+          <span class="badge badge-drive">10-15 min</span>
+        </div>
+      </div>
+      <div class="restaurant-card-body"><div class="restaurant-card-body-inner">
+        <dl class="restaurant-detail">
+          <dt>Vibe</dt><dd>Upscale-ish, great patio, live music. Private room available &mdash; ideal for birthday dinner.</dd>
+          <dt>Reserve</dt><dd>Via OpenTable. Highly recommended for a group of 8.</dd>
+          <dt>Hours</dt><dd>Tue-Thu 4-9pm, Fri-Sat 4-9:30pm</dd>
+          <dt>Closed</dt><dd class="warn">Sunday &amp; Monday</dd>
+        </dl>
+      </div></div>
+    </div>
+
+    <div class="restaurant-card" onclick="toggleCard(this)">
+      <div class="restaurant-card-header">
+        <div>
+          <h4>Grateful Head Pizza</h4>
+          <p>Wood-fired pizza, craft beer</p>
+        </div>
+        <div class="restaurant-badge"><span class="badge badge-drive">10-15 min</span></div>
+      </div>
+      <div class="restaurant-card-body"><div class="restaurant-card-body-inner">
+        <dl class="restaurant-detail">
+          <dt>Vibe</dt><dd>Casual local favorite in a converted 1930s schoolhouse. Big patio + beer garden, live music weekends.</dd>
+          <dt>Reserve</dt><dd>May accept reservations via OpenTable &mdash; verify closer to trip.</dd>
+          <dt>Hours</dt><dd>Mon-Thu &amp; Sun 11am-8pm, Fri-Sat 11am-9pm</dd>
+        </dl>
+      </div></div>
+    </div>
+
+    <div class="restaurant-card" onclick="toggleCard(this)">
+      <div class="restaurant-card-header">
+        <div>
+          <h4>Mountain Fork Brewery</h4>
+          <p>Brick-oven pizza, 20 craft beers on tap</p>
+        </div>
+        <div class="restaurant-badge"><span class="badge badge-drive">10-15 min</span></div>
+      </div>
+      <div class="restaurant-card-body"><div class="restaurant-card-body-inner">
+        <dl class="restaurant-detail">
+          <dt>Vibe</dt><dd>On-site brewery with tours + tastings. Also serves burgers, wings, sandwiches. Live music Fri-Sat.</dd>
+          <dt>Hours</dt><dd>Mon-Thu &amp; Sun 11am-8:30pm, Fri-Sat 11am-9:30pm</dd>
+        </dl>
+      </div></div>
+    </div>
+
+    <div class="restaurant-card" onclick="toggleCard(this)">
+      <div class="restaurant-card-header">
+        <div>
+          <h4>Pressa Italia</h4>
+          <p>Italian &mdash; wood-fired pizza, homemade pasta, wine bar</p>
+        </div>
+        <div class="restaurant-badge">
+          <span class="badge badge-warn">Reserve Ahead</span>
+          <span class="badge badge-drive">10-15 min</span>
+        </div>
+      </div>
+      <div class="restaurant-card-body"><div class="restaurant-card-body-inner">
+        <dl class="restaurant-detail">
+          <dt>Vibe</dt><dd>Authentic Italian + neighborhood market with 70+ wines, imported cheeses, charcuterie.</dd>
+          <dt>Warning</dt><dd class="warn">Small restaurant, limited seating &mdash; up to 2hr wait without reservation.</dd>
+          <dt>Hours</dt><dd>Mon-Thu 11am-9pm, Fri-Sat 11am-4pm &amp; 5-10pm, Sun 11am-9pm</dd>
+        </dl>
+      </div></div>
+    </div>
+
+    <div class="restaurant-card" onclick="toggleCard(this)">
+      <div class="restaurant-card-header">
+        <div>
+          <h4>Buffalo Grill</h4>
+          <p>BBQ, burgers, street tacos</p>
+        </div>
+        <div class="restaurant-badge"><span class="badge badge-drive">10-15 min</span></div>
+      </div>
+      <div class="restaurant-card-body"><div class="restaurant-card-body-inner">
+        <dl class="restaurant-detail">
+          <dt>Vibe</dt><dd>Casual outdoor picnic patio with live music and cornhole. Steaks on special nights only.</dd>
+          <dt>Hours</dt><dd>Mon &amp; Wed-Sat 11am-9pm, Sun 11am-5pm</dd>
+          <dt>Closed</dt><dd class="warn">Tuesday</dd>
+        </dl>
+      </div></div>
+    </div>
+
+    <div class="restaurant-card" onclick="toggleCard(this)">
+      <div class="restaurant-card-header">
+        <div>
+          <h4>Mexico Lindo</h4>
+          <p>Mexican &mdash; AYCE Taco Tuesday, birthday sombrero</p>
+        </div>
+        <div class="restaurant-badge">
+          <span class="badge badge-warn">In Broken Bow</span>
+          <span class="badge badge-drive">20-25 min</span>
+        </div>
+      </div>
+      <div class="restaurant-card-body"><div class="restaurant-card-body-inner">
+        <dl class="restaurant-detail">
+          <dt>Note</dt><dd class="warn">In Broken Bow town, not Hochatown &mdash; farthest restaurant from the cabin.</dd>
+          <dt>Vibe</dt><dd>Birthday sombrero &amp; guitar celebration. AYCE tacos on Tuesdays.</dd>
+          <dt>Hours</dt><dd>Mon-Thu &amp; Sun 7am-9pm, Fri-Sat 7am-10pm</dd>
+        </dl>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div class="expandable reveal" style="margin-top:16px">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>Coming Soon: The Walter</h3>
+      <span class="tag" style="background:#fff3e0;color:#e65100">Unconfirmed</span>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body"><div class="expandable-body-inner">
+      <p style="font-size:.9rem;color:var(--text-light)">American bistro, heritage cuisine at the HochaBow complex. Announced &ldquo;Summer 2026&rdquo; but not confirmed open as of June 2026. No reviews, no menu available. <strong>Do not rely on for birthday dinner &mdash; verify before trip.</strong></p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ═══ DRINK ═══ -->
+<section class="section" id="drink">
+  <div class="reveal">
+    <div class="section-label">Drink</div>
+    <h2 class="section-title">Wineries &amp; Breweries</h2>
+    <p class="section-intro">The Hochatown area punches above its weight for wine, beer, and spirits.</p>
+  </div>
+
+  <div class="winery-grid reveal">
+    <div class="winery-card">
+      <h4>Girls Gone Wine</h4>
+      <div class="winery-type">Boutique Winery</div>
+      <p>Two locations (Broken Bow + Hochatown). Complimentary tastings at both (~15 min). VIP &ldquo;G-Spot&rdquo; seated tasting at Hochatown &mdash; ~$30-33/person, velvet couches. Reserve online or call 580-306-WINE.</p>
+      <div class="winery-highlight">Create custom-label wine &mdash; great birthday activity</div>
+    </div>
+    <div class="winery-card">
+      <h4>Knotted Rope Winery</h4>
+      <div class="winery-type">Winery</div>
+      <p>Reds and whites, sweet to dry. 83 N Lukfata Trail.</p>
+      <p style="margin-top:8px;font-size:.82rem;color:var(--accent);font-weight:500">Sun-Thu 12-5pm &middot; Fri-Sat 12-7pm</p>
+    </div>
+    <div class="winery-card">
+      <h4>Mountain Fork Brewery</h4>
+      <div class="winery-type">Brewery + Restaurant</div>
+      <p>20 craft beers on tap with brick-oven pizza. Tours &amp; tastings available. 89 N Lukfata Trail.</p>
+    </div>
+    <div class="winery-card">
+      <h4>Hochatown Distilling Co.</h4>
+      <div class="winery-type">Bourbon Distillery</div>
+      <p>First Bottled in Bond bourbon made in Oklahoma. Tours and tastings. 41 N Lukfata Trail.</p>
+    </div>
+  </div>
+
+  <div class="callout reveal">
+    <div class="callout-icon">&#x1f377;</div>
+    <div>
+      <h4>Wine Tour Idea</h4>
+      <p>Hit Girls Gone Wine (Hochatown, on Hwy 259) then walk the Lukfata Trail cluster &mdash; Knotted Rope, Mountain Fork Brewery, and Hochatown Distilling are all within steps of each other. Easy afternoon, no driving between stops.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ADVENTURE ═══ -->
+<section class="section" id="adventure">
+  <div class="reveal">
+    <div class="section-label">Get Outside</div>
+    <h2 class="section-title">Outdoor Adventures</h2>
+  </div>
+
+  <!-- Weather -->
+  <div class="weather-bar reveal">
+    <div class="weather-item">
+      <div class="weather-icon">&#x2600;</div>
+      <div class="weather-label">Daytime High</div>
+      <div class="weather-value">82&ndash;85&deg;F</div>
+    </div>
+    <div class="weather-item">
+      <div class="weather-icon">&#x1f319;</div>
+      <div class="weather-label">Evening Low</div>
+      <div class="weather-value">58&ndash;62&deg;F</div>
+      <div class="weather-note">Bring a jacket</div>
+    </div>
+    <div class="weather-item">
+      <div class="weather-icon">&#x1f327;</div>
+      <div class="weather-label">September Rain</div>
+      <div class="weather-value">7&ndash;8 days</div>
+      <div class="weather-note">~3.4&ndash;4.8&Prime; total</div>
+    </div>
+  </div>
+
+  <!-- Beavers Bend -->
+  <div class="activity-section reveal">
+    <h3>Beavers Bend State Park</h3>
+    <p class="activity-meta">~10-15 min from cabin &middot; 12+ miles of trails &middot; River access &middot; Nature center</p>
+    <div class="activity-grid">
+      <div class="activity-item">
+        <h4>&#x1f97e; Hiking</h4>
+        <p>Cedar Bluff Nature Trail (1 mi, moderate) &mdash; great Mountain Fork River views. David Boren Trail is the main connected system.</p>
+      </div>
+      <div class="activity-item">
+        <h4>&#x1f40e; Horseback Riding</h4>
+        <p>Beavers Bend Depot &amp; Trail Rides &mdash; guided 1-hour, 2.5 mi flat trail. Kids 5+. Closed Thursdays.</p>
+        <div class="price">$50/person</div>
+      </div>
+      <div class="activity-item">
+        <h4>&#x1f3de; Scenic Overlooks</h4>
+        <p>Skyline Trail and Lookout Mountain Trail offer panoramic forest views.</p>
+      </div>
+      <div class="activity-item">
+        <h4>&#x1f99c; Nature Center</h4>
+        <p>Aquariums, taxidermy exhibits, naturalist-led programs.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lake -->
+  <div class="activity-section reveal">
+    <h3>Broken Bow Lake</h3>
+    <p class="activity-meta">14,000-acre lake surrounded by pines &middot; ~15-20 min from cabin</p>
+    <div class="activity-grid">
+      <div class="activity-item"><h4>&#x1f6f6; Single Kayak</h4><p>Beavers Bend Land &amp; Water Park</p><div class="price">$15</div></div>
+      <div class="activity-item"><h4>&#x1f6f6; Tandem Kayak</h4><p>Beavers Bend Land &amp; Water Park</p><div class="price">$20</div></div>
+      <div class="activity-item"><h4>&#x1f3c4; Paddleboard</h4><p>Beavers Bend L&amp;WP / Paddle SUP OK</p><div class="price">$15+</div></div>
+      <div class="activity-item"><h4>&#x1f6a3; Canoe Float</h4><p>Beavers Bend River Floats &mdash; scenic 3/4 mi stretch</p><div class="contact">(580) 494-6070</div></div>
+    </div>
+  </div>
+
+  <!-- ATV -->
+  <div class="expandable reveal">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>ATV / UTV Rentals</h3>
+      <span class="tag">Direct Trail Access</span>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body"><div class="expandable-body-inner">
+      <p style="font-size:.88rem;color:var(--text-light);margin-bottom:16px">The cabin has direct trail access &mdash; bring your own or rent. Note: pricey for a group, best if a subset is into it.</p>
+      <div class="activity-grid">
+        <div class="activity-item"><h4>Outlaws UTV Rentals</h4><p>Polaris RZR XP1000s (2-6 seats). Only rental ON the trails.</p><div class="contact">(580) 306-7368</div></div>
+        <div class="activity-item"><h4>Captain's Hideaway</h4><p>4/8/24-hour rentals. Helmets + trail map + trailer included.</p><div class="contact">(580) 306-5150</div></div>
+        <div class="activity-item"><h4>Bandits ATV &amp; Boat</h4><p>Direct trail access, no towing needed.</p><div class="contact">(580) 494-3333</div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Ziplining -->
+  <div class="expandable reveal">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>Ziplining &mdash; Rugaru Adventures</h3>
+      <span class="tag">$89/person</span>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body"><div class="expandable-body-inner">
+      <p style="font-size:.88rem;color:var(--text-light)">6 zip lines totaling ~3,500 ft. Line #6 crosses Broken Bow Lake. ~2 hours. Book in advance. <strong>(580) 494-2947</strong></p>
+    </div></div>
+  </div>
+
+  <!-- Fishing -->
+  <div class="expandable reveal">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>Fishing</h3>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body"><div class="expandable-body-inner">
+      <p style="font-size:.88rem;color:var(--text-light)">Mountain Fork River &mdash; year-round trout fishing (rainbow and brown trout). Guides available. Broken Bow Lake also offers fishing.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ═══ FUN ═══ -->
+<section class="section" id="fun">
+  <div class="reveal">
+    <div class="section-label">Fun &amp; Games</div>
+    <h2 class="section-title">Entertainment</h2>
+  </div>
+
+  <div class="expandable open reveal">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>At the Cabin</h3>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body" style="max-height:500px"><div class="expandable-body-inner">
+      <div class="ent-grid">
+        <div class="ent-item"><div class="ent-icon">&#x2668;</div><h4>Hot Tub</h4><p>Under towering pines</p></div>
+        <div class="ent-item"><div class="ent-icon">&#x1f525;</div><h4>Fire Pit</h4><p>Firewood included</p></div>
+        <div class="ent-item"><div class="ent-icon">&#x1f0cf;</div><h4>Poker Table</h4><p>Game loft</p></div>
+        <div class="ent-item"><div class="ent-icon">&#x1f3d3;</div><h4>Ping Pong</h4><p>Game loft</p></div>
+        <div class="ent-item"><div class="ent-icon">&#x1f3af;</div><h4>Cornhole</h4><p>Outdoor</p></div>
+        <div class="ent-item"><div class="ent-icon">&#x1f3ae;</div><h4>Arcade</h4><p>Classic games</p></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="reveal" style="margin-top:8px">
+    <h3 style="font-size:1.15rem;margin-bottom:16px;color:var(--green-deep)">Nearby Hochatown</h3>
+    <div class="ent-grid">
+      <div class="ent-item"><div class="ent-icon">&#x1f3ce;</div><h4>Go-Karts</h4><p>Hochatown Amusements &middot; Figure-eight track</p><div class="price">$8/race</div></div>
+      <div class="ent-item"><div class="ent-icon">&#x26f3;</div><h4>Mini Golf</h4><p>Hochatown Amusements &middot; 18 holes</p><div class="price">$5/round</div></div>
+      <div class="ent-item"><div class="ent-icon">&#x1fa93;</div><h4>Axe Throwing</h4><p>Bigfoot Axe Throwing &middot; 4 lanes, guided</p><div class="price">$20-25/person</div></div>
+      <div class="ent-item"><div class="ent-icon">&#x1f510;</div><h4>Escape Rooms</h4><p>Hochatown Escape Games &middot; 6 rooms, 60 min</p><div class="price">Varies</div></div>
+      <div class="ent-item"><div class="ent-icon">&#x1f366;</div><h4>Ice Cream</h4><p>Hochatown Amusements &middot; Hand-dipped Blue Bell</p></div>
+    </div>
+  </div>
+
+  <!-- Casino -->
+  <div class="casino-card reveal" style="margin-top:24px">
+    <h3>Choctaw Landing</h3>
+    <p class="casino-sub">$238M casino &amp; resort &middot; ~5-10 min from cabin &middot; Right in Hochatown</p>
+    <div class="casino-features">
+      <div class="casino-feature"><h4>Casino Floor</h4><p>600 slots, 8 table games &mdash; blackjack, roulette, three-card poker, ultimate Texas hold'em</p></div>
+      <div class="casino-feature"><h4>Pool &amp; Lounge</h4><p>10 cabanas, 2 hot tubs, 3 fire pits, outdoor amphitheater</p></div>
+      <div class="casino-feature"><h4>Dining</h4><p>Restaurant + 3 outdoor dining/bar areas</p></div>
+      <div class="casino-feature"><h4>The Mercantile</h4><p>Starbucks, Tuklo Deli, snacks, essentials &mdash; open 24/7</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VIBES ═══ -->
+<section class="section" id="vibes">
+  <div class="reveal">
+    <div class="section-label">Pick Your Vibe</div>
+    <h2 class="section-title">Saturday Itineraries</h2>
+    <p class="section-intro">Four ways to fill the big day. Mix and match freely.</p>
+  </div>
+
+  <div class="vibe-grid reveal">
+    <div class="vibe-card">
+      <span class="vibe-emoji">&#x1f377;</span>
+      <h4>Chill &amp; Celebrate</h4>
+      <ul>
+        <li><strong>Morning:</strong> Sleep in, cabin breakfast, hot tub</li>
+        <li><strong>Afternoon:</strong> Wine tour (Girls Gone Wine + Knotted Rope)</li>
+        <li><strong>Evening:</strong> Birthday dinner at Abendigo's, fire pit toasts</li>
+      </ul>
+    </div>
+    <div class="vibe-card">
+      <span class="vibe-emoji">&#x1f3d4;</span>
+      <h4>Adventure Mode</h4>
+      <ul>
+        <li><strong>Morning:</strong> Kayak/paddleboard on Broken Bow Lake</li>
+        <li><strong>Afternoon:</strong> ATV riding from the cabin</li>
+        <li><strong>Evening:</strong> Grateful Head Pizza, poker at the cabin</li>
+      </ul>
+    </div>
+    <div class="vibe-card">
+      <span class="vibe-emoji">&#x1f343;</span>
+      <h4>Best of Both</h4>
+      <ul>
+        <li><strong>Morning:</strong> Hike Cedar Bluff Trail at Beavers Bend</li>
+        <li><strong>Afternoon:</strong> Wine tasting + Hochatown browsing</li>
+        <li><strong>Evening:</strong> Cook-in birthday dinner, fire pit, arcade</li>
+      </ul>
+    </div>
+    <div class="vibe-card">
+      <span class="vibe-emoji">&#x1f680;</span>
+      <h4>Full Send</h4>
+      <ul>
+        <li><strong>Morning:</strong> Group breakfast, then escape room</li>
+        <li><strong>Midday:</strong> Go-karts + mini golf + axe throwing</li>
+        <li><strong>Afternoon:</strong> Lake time or hot tub</li>
+        <li><strong>Evening:</strong> Casino night or Abendigo's dinner</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PACK ═══ -->
+<section class="section" id="pack">
+  <div class="reveal">
+    <div class="section-label">Packing</div>
+    <h2 class="section-title">What to Bring</h2>
+    <p class="section-intro">Check items off as you pack &mdash; your list saves automatically.</p>
+  </div>
+
+  <ul class="checklist reveal" id="checklist">
+    <li class="checklist-section">Everyone</li>
+    <li><input type="checkbox" data-key="c1"><span>Clothes for 2 nights (layers &mdash; highs 82-85, lows 58-62)</span></li>
+    <li><input type="checkbox" data-key="c2"><span>Light jacket or hoodie (evenings in the upper 50s)</span></li>
+    <li><input type="checkbox" data-key="c3"><span>Swimsuit (hot tub)</span></li>
+    <li><input type="checkbox" data-key="c4"><span>Comfortable shoes / hiking boots</span></li>
+    <li><input type="checkbox" data-key="c5"><span>Sunscreen &amp; bug spray</span></li>
+    <li><input type="checkbox" data-key="c6"><span>Drinks / alcohol beyond what's provided</span></li>
+    <li><input type="checkbox" data-key="c7"><span>Games, cards, speakers</span></li>
+    <li class="checklist-section">Optional</li>
+    <li><input type="checkbox" data-key="c8"><span>ATV / UTV (trail access from property)</span></li>
+    <li><input type="checkbox" data-key="c9"><span>Fishing gear</span></li>
+    <li><input type="checkbox" data-key="c10"><span>Kayak / paddleboard (or rent locally)</span></li>
+    <li><input type="checkbox" data-key="c11"><span>Camera</span></li>
+    <li class="checklist-section">Provided at Cabin</li>
+    <li style="opacity:.5;cursor:default"><input type="checkbox" checked disabled><span>Towels &amp; linens</span></li>
+    <li style="opacity:.5;cursor:default"><input type="checkbox" checked disabled><span>Coffee (Keurig + pods)</span></li>
+    <li style="opacity:.5;cursor:default"><input type="checkbox" checked disabled><span>Cookware, bakeware, blender</span></li>
+    <li style="opacity:.5;cursor:default"><input type="checkbox" checked disabled><span>Firewood</span></li>
+    <li style="opacity:.5;cursor:default"><input type="checkbox" checked disabled><span>Wi-Fi</span></li>
+  </ul>
+</section>
+
+<!-- ═══ GROCERIES ═══ -->
+<section class="section" id="groceries" style="padding-top:0">
+  <div class="reveal">
+    <div class="section-label">Supplies</div>
+    <h2 class="section-title">Groceries &amp; Stores</h2>
+  </div>
+
+  <div class="grocery-grid reveal">
+    <div class="grocery-item">
+      <div><h4>The Market at Local 259</h4><p>Gourmet market &mdash; fresh meats, produce, beer, deli, baked goods. 8am-8pm daily.</p></div>
+      <span class="grocery-distance">5-10 min</span>
+    </div>
+    <div class="grocery-item">
+      <div><h4>Choctaw Landing Mercantile</h4><p>Convenience-level: snacks, Starbucks, Tuklo Deli. Open 24/7. Not a full grocery.</p></div>
+      <span class="grocery-distance">5-10 min</span>
+    </div>
+    <div class="grocery-item">
+      <div><h4>Walmart</h4><p>501 S Park Dr, Broken Bow. Full grocery run. 6am-11pm.</p></div>
+      <span class="grocery-distance">~20 min</span>
+    </div>
+    <div class="grocery-item">
+      <div><h4>Pruett's Food</h4><p>201 S Park Dr, Broken Bow. Locally owned grocery chain. 7am-10pm.</p></div>
+      <span class="grocery-distance">~20 min</span>
+    </div>
+  </div>
+
+  <div class="callout reveal" style="margin-top:16px">
+    <div class="callout-icon">&#x1f4a1;</div>
+    <div>
+      <h4>Pro Tip</h4>
+      <p>The host offers <strong>grocery delivery + pre-stocked fridge</strong> as a concierge add-on. Arrive Friday to a stocked kitchen &mdash; no Walmart detour needed.</p>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:32px">
+    <h3 style="font-size:1.15rem;color:var(--green-deep);margin-bottom:16px">Concierge Add-Ons <span style="font-family:'DM Sans';font-size:.82rem;color:var(--text-light);font-weight:400">(through host Deidre)</span></h3>
+    <div class="concierge-grid">
+      <div class="concierge-item"><div class="c-icon">&#x1f6d2;</div><p>Grocery delivery + pre-stocked fridge</p></div>
+      <div class="concierge-item"><div class="c-icon">&#x1f9c0;</div><p>Custom charcuterie boards</p></div>
+      <div class="concierge-item"><div class="c-icon">&#x1fab5;</div><p>Extra firewood bundles</p></div>
+      <div class="concierge-item"><div class="c-icon">&#x1f389;</div><p>Celebration setups (birthday decorations)</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DETAILS ═══ -->
+<section class="section" id="details">
+  <div class="reveal">
+    <div class="section-label">Logistics</div>
+    <h2 class="section-title">The Details</h2>
+  </div>
+
+  <div class="detail-grid reveal">
+    <div class="detail-card">
+      <h3>Cost Split</h3>
+      <div class="detail-row"><span class="label">AirBnB rental</span><span class="value">TBD</span></div>
+      <div class="detail-row"><span class="label">Groceries</span><span class="value">TBD</span></div>
+      <div class="detail-row"><span class="label">Activities</span><span class="value">TBD</span></div>
+      <div class="detail-row"><span class="label">Birthday fund</span><span class="value">TBD</span></div>
+      <div class="detail-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:12px"><span class="label"><strong>Per couple</strong></span><span class="value"><strong>TBD</strong></span></div>
+      <p style="font-size:.82rem;color:var(--text-light);margin-top:12px;font-style:italic">Payment via Venmo or Splitwise &mdash; TBD</p>
+    </div>
+
+    <div class="detail-card">
+      <h3>Contacts</h3>
+      <div class="detail-row"><span class="label">Host (Deidre)</span><span class="value"><a href="tel:+12142134994">(214) 213-4994</a></span></div>
+      <div class="detail-row"><span class="label">Trip Coordinator (Stephen)</span><span class="value">TBD</span></div>
+      <div class="detail-row"><span class="label">Confirmation Code</span><span class="value" style="font-family:monospace;letter-spacing:.05em">HMP8N44NFM</span></div>
+    </div>
+  </div>
+
+  <div class="expandable reveal" style="margin-top:24px">
+    <div class="expandable-header" onclick="toggleExpand(this)">
+      <h3>Booking &amp; Reservations Checklist</h3>
+      <svg class="expandable-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="expandable-body"><div class="expandable-body-inner">
+      <ul class="booking-list">
+        <li>Saturday dinner restaurant reservation (Abendigo's via OpenTable or Pressa Italia)</li>
+        <li>Girls Gone Wine VIP tasting (Hochatown location)</li>
+        <li>ATV/UTV rentals (if doing)</li>
+        <li>Zipline tour at Rugaru Adventures (if doing)</li>
+        <li>Escape room at Hochatown Escape Games (if doing)</li>
+        <li>Host concierge add-ons (grocery delivery, birthday setup)</li>
+      </ul>
+    </div></div>
+  </div>
+</section>
+
+<footer>
+  <p>Made with care for <strong>Lacey's 40th</strong> &middot; Broken Bow &rsquo;26 &middot; Sep 25&ndash;27</p>
+</footer>
+
+<script>
+// ── Expandable sections ──
+function toggleExpand(header) {
+  const el = header.closest('.expandable');
+  const body = el.querySelector('.expandable-body');
+  if (el.classList.contains('open')) {
+    body.style.maxHeight = '0';
+    el.classList.remove('open');
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    el.classList.add('open');
+  }
+}
+
+// ── Restaurant cards ──
+function toggleCard(card) {
+  const body = card.querySelector('.restaurant-card-body');
+  if (card.classList.contains('open')) {
+    body.style.maxHeight = '0';
+    card.classList.remove('open');
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    card.classList.add('open');
+  }
+}
+
+// ── Scroll reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Nav hide on scroll ──
+let lastScroll = 0;
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  const curr = window.scrollY;
+  nav.classList.toggle('hidden', curr > lastScroll && curr > 200);
+  nav.classList.toggle('shadow', curr > 10);
+  lastScroll = curr;
+}, { passive: true });
+
+// ── Active nav link ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.2, rootMargin: '-80px 0px -60% 0px' });
+sections.forEach(s => navObserver.observe(s));
+
+// ── Packing checklist persistence ──
+const saved = JSON.parse(localStorage.getItem('bb-checklist') || '{}');
+document.querySelectorAll('#checklist input[data-key]').forEach(cb => {
+  if (saved[cb.dataset.key]) { cb.checked = true; cb.closest('li').classList.add('checked'); }
+  cb.addEventListener('change', () => {
+    cb.closest('li').classList.toggle('checked', cb.checked);
+    const state = {};
+    document.querySelectorAll('#checklist input[data-key]').forEach(c => { if (c.checked) state[c.dataset.key] = true; });
+    localStorage.setItem('bb-checklist', JSON.stringify(state));
+  });
+});
+</script>
+</body>
+</html>
